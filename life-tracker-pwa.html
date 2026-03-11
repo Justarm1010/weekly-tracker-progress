@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Life Tracker">
+<meta name="theme-color" content="#ffffff">
+<title>Life Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --white: #ffffff;
+    --off-white: #f7f7f5;
+    --border: #e8e8e4;
+    --text: #1a1a18;
+    --text-2: #6b6b65;
+    --text-3: #a8a8a0;
+
+    --msk:     #2C3E6B;
+    --msk-bg:  #eef0f8;
+    --guitar:  #1B5E20;
+    --guitar-bg: #eef5ee;
+    --app:     #4A148C;
+    --app-bg:  #f3eef9;
+    --nurse:   #BF360C;
+    --nurse-bg:#fdf0eb;
+    --diet:    #00695C;
+    --diet-bg: #eaf4f2;
+
+    --radius: 16px;
+    --radius-sm: 10px;
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-top: env(safe-area-inset-top, 0px);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--off-white);
+    color: var(--text);
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    overscroll-behavior: none;
+  }
+
+  /* ── NAV ── */
+  .top-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(247,247,245,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: calc(var(--safe-top) + 14px) 20px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .top-bar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .app-title {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+  }
+  .date-chip {
+    font-size: 12px;
+    color: var(--text-2);
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .tab-bar {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: none;
+    gap: 6px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(247,247,245,0.92);
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    flex-shrink: 0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--text-2);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .tab-btn.active {
+    background: var(--text);
+    color: var(--white);
+    border-color: var(--text);
+  }
+
+  /* ── PAGES ── */
+  .page { display: none; padding: 20px 20px calc(90px + var(--safe-bottom)); }
+  .page.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 14px 16px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-2);
+  }
+  .card-body { padding: 0 16px 16px; }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-3);
+    margin: 20px 0 8px;
+  }
+
+  /* ── DASHBOARD GREETING ── */
+  .greeting {
+    margin-bottom: 6px;
+    font-size: 26px;
+    font-weight: 300;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+  .greeting strong { font-weight: 600; }
+  .sub-greeting {
+    font-size: 14px;
+    color: var(--text-2);
+    margin-bottom: 20px;
+  }
+
+  /* ── STREAK CARDS ── */
+  .streaks-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .streak-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    cursor: pointer;
+    transition: transform 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+  .streak-card:active { transform: scale(0.97); }
+  .streak-card-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  .streak-card-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-2);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .streak-number {
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: -1px;
+  }
+  .streak-unit {
+    font-size: 12px;
+    color: var(--text-3);
+    margin-top: 2px;
+  }
+  .streak-best {
+    font-size: 11px;
+    color: var(--text-3);
+    margin-top: 6px;
+  }
+  .streak-edit-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--off-white);
+    border: none;
+    font-size: 11px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-2);
+  }
+
+  /* ── PROGRESS BARS ── */
+  .progress-list { display: flex; flex-direction: column; gap: 10px; }
+  .progress-row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .progress-row-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .progress-cat-name {
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .progress-cat-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .progress-pct {
+    font-size: 12px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-2);
+  }
+  .progress-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+  .progress-counts {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .progress-tally {
+    font-size: 11px;
+    color: var(--text-3);
+    font-family: 'DM Mono', monospace;
+  }
+  .progress-bump {
+    display: flex;
+    gap: 6px;
+  }
+  .bump-btn {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    font-size: 13px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text-2);
+    transition: all 0.1s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .bump-btn:active { transform: scale(0.9); background: var(--off-white); }
+
+  /* ── CALORIE WIDGET ── */
+  .cal-widget {
+    background: var(--diet-bg);
+    border: 1px solid rgba(0,105,92,0.15);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .cal-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .cal-consumed {
+    font-size: 38px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: -2px;
+    color: var(--diet);
+    line-height: 1;
+  }
+  .cal-label { font-size: 12px; color: var(--text-2); margin-left: 4px; margin-bottom: 4px; }
+  .cal-remaining {
+    text-align: right;
+  }
+  .cal-remaining-num {
+    font-size: 20px;
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+  }
+  .cal-remaining-label { font-size: 11px; color: var(--text-2); }
+  .cal-track {
+    height: 8px;
+    background: rgba(0,105,92,0.15);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .cal-fill {
+    height: 100%;
+    background: var(--diet);
+    border-radius: 10px;
+    transition: width 0.4s ease;
+  }
+  .cal-quick-add {
+    display: flex;
+    gap: 8px;
+  }
+  .cal-input {
+    flex: 1;
+    padding: 9px 12px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid rgba(0,105,92,0.25);
+    background: var(--white);
+    font-size: 15px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text);
+    outline: none;
+  }
+  .cal-input:focus { border-color: var(--diet); }
+  .cal-add-btn {
+    padding: 9px 16px;
+    border-radius: var(--radius-sm);
+    background: var(--diet);
+    color: var(--white);
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.15s;
+  }
+  .cal-add-btn:active { opacity: 0.8; }
+  .cal-log {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .cal-log-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-2);
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(0,105,92,0.08);
+  }
+  .cal-log-del {
+    background: none;
+    border: none;
+    color: var(--text-3);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 2px 4px;
+  }
+
+  /* ── TASK LIST ── */
+  .task-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .task-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .task-item:first-child { padding-top: 0; }
+  .task-check {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+    transition: all 0.2s;
+  }
+  .task-check.done {
+    background: var(--text);
+    border-color: var(--text);
+  }
+  .task-check.done::after {
+    content: '';
+    width: 5px; height: 9px;
+    border: 2px solid white;
+    border-top: none; border-left: none;
+    transform: rotate(45deg) translate(-1px,-1px);
+  }
+  .task-check.in-progress {
+    border-color: #f59e0b;
+    background: #fef3c7;
+  }
+  .task-text {
+    flex: 1;
+    font-size: 15px;
+    line-height: 1.4;
+    padding-top: 1px;
+  }
+  .task-text.done {
+    text-decoration: line-through;
+    color: var(--text-3);
+  }
+  .task-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 3px;
+  }
+  .task-cat-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+  .task-priority {
+    font-size: 10px;
+    color: var(--text-3);
+  }
+  .task-cycle-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 2px;
+    flex-shrink: 0;
+    opacity: 0.4;
+    transition: opacity 0.15s;
+  }
+  .task-cycle-btn:hover { opacity: 0.8; }
+
+  /* ── CAT SECTION (individual pages) ── */
+  .cat-header {
+    border-radius: var(--radius);
+    padding: 20px 18px;
+    margin-bottom: 14px;
+    color: white;
+  }
+  .cat-header h2 { font-size: 22px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.3px; }
+  .cat-header p { font-size: 13px; opacity: 0.75; }
+
+  .goal-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .goal-row:last-child { border-bottom: none; }
+  .goal-text { flex: 1; font-size: 14px; line-height: 1.3; }
+  .goal-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+  .goal-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-family: 'DM Mono', monospace;
+    flex-shrink: 0;
+  }
+  .goal-period {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-3);
+    padding: 12px 16px 4px;
+  }
+
+  /* ── BOTTOM NAV ── */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(247,247,245,0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    display: flex;
+    padding: 8px 0 calc(8px + var(--safe-bottom));
+  }
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 6px 4px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+    border: none;
+    background: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .nav-item:active { opacity: 0.6; }
+  .nav-icon { font-size: 20px; line-height: 1; }
+  .nav-label { font-size: 10px; font-weight: 500; color: var(--text-3); letter-spacing: 0.2px; }
+  .nav-item.active .nav-label { color: var(--text); }
+  .nav-item.active .nav-icon { filter: none; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    align-items: flex-end;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-sheet {
+    background: var(--white);
+    border-radius: 22px 22px 0 0;
+    padding: 20px 20px calc(20px + var(--safe-bottom));
+    width: 100%;
+    max-width: 480px;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+  .modal-handle {
+    width: 36px; height: 4px;
+    background: var(--border);
+    border-radius: 10px;
+    margin: 0 auto 18px;
+  }
+  .modal-title {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    letter-spacing: -0.2px;
+  }
+  .modal-input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    font-size: 16px;
+    font-family: 'DM Sans', sans-serif;
+    outline: none;
+    margin-bottom: 10px;
+    background: var(--off-white);
+    color: var(--text);
+  }
+  .modal-input:focus { border-color: var(--text); background: var(--white); }
+  .modal-row { display: flex; gap: 10px; }
+  .modal-btn {
+    flex: 1;
+    padding: 13px;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    transition: opacity 0.15s;
+  }
+  .modal-btn:active { opacity: 0.75; }
+  .modal-btn.primary { background: var(--text); color: var(--white); }
+  .modal-btn.secondary { background: var(--off-white); color: var(--text-2); border: 1px solid var(--border); }
+
+  /* ── INSTALL BANNER ── */
+  .install-banner {
+    background: var(--text);
+    color: var(--white);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .install-icon { font-size: 22px; flex-shrink: 0; }
+  .install-text { flex: 1; }
+  .install-text strong { font-size: 13px; font-weight: 600; display: block; margin-bottom: 2px; }
+  .install-text span { font-size: 12px; opacity: 0.6; }
+  .install-dismiss {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    flex-shrink: 0;
+  }
+
+  /* ── MISC ── */
+  .empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-3);
+    font-size: 14px;
+  }
+  .empty-state .big { font-size: 32px; margin-bottom: 8px; }
+
+  .add-task-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    border: 1.5px dashed var(--border);
+    background: none;
+    color: var(--text-2);
+    font-size: 14px;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    margin-top: 8px;
+    transition: all 0.15s;
+  }
+  .add-task-btn:active { background: var(--off-white); }
+
+  .divider { height: 1px; background: var(--border); margin: 4px 0 12px; }
+
+  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
+  .pill {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1.5px solid var(--border);
+    cursor: pointer;
+    background: var(--white);
+    color: var(--text-2);
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.1s;
+  }
+  .pill.selected { background: var(--text); color: var(--white); border-color: var(--text); }
+
+  .weekly-goal-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .weekly-goal-row:last-child { border-bottom: none; }
+  .wg-top { display: flex; align-items: center; justify-content: space-between; }
+  .wg-name { font-size: 14px; font-weight: 500; }
+  .wg-pct { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--text-2); }
+  .wg-track { height: 5px; background: var(--border); border-radius: 10px; overflow: hidden; }
+  .wg-fill { height: 100%; border-radius: 10px; transition: width 0.4s ease; }
+  .wg-bottom { display: flex; align-items: center; justify-content: space-between; }
+  .wg-count { font-size: 11px; color: var(--text-3); font-family: 'DM Mono', monospace; }
+  .wg-stepper { display: flex; align-items: center; gap: 8px; }
+  .wg-step-btn {
+    width: 26px; height: 26px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    font-size: 15px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.1s;
+  }
+  .wg-step-btn:active { background: var(--off-white); transform: scale(0.9); }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <div class="top-bar-inner">
+    <span class="app-title">Life Tracker</span>
+    <span class="date-chip" id="date-display"></span>
+  </div>
+  <div class="tab-bar" id="tab-bar">
+    <button class="tab-btn active" onclick="showPage('dashboard',this)">Dashboard</button>
+    <button class="tab-btn" onclick="showPage('msk',this)">MSK/CRC</button>
+    <button class="tab-btn" onclick="showPage('guitar',this)">Guitar</button>
+    <button class="tab-btn" onclick="showPage('app',this)">App Dev</button>
+    <button class="tab-btn" onclick="showPage('nursing',this)">Nursing</button>
+    <button class="tab-btn" onclick="showPage('diet',this)">Diet</button>
+  </div>
+</div>
+
+<!-- ═══════════════ DASHBOARD ═══════════════ -->
+<div class="page active" id="page-dashboard">
+
+  <div id="install-banner" class="install-banner" style="display:none">
+    <div class="install-icon">📲</div>
+    <div class="install-text">
+      <strong>Add to Home Screen</strong>
+      <span>Tap Share → "Add to Home Screen"</span>
+    </div>
+    <button class="install-dismiss" onclick="dismissInstall()">Got it</button>
+  </div>
+
+  <div class="greeting">
+    Good <span id="time-greeting"></span>,<br><strong id="user-name-display">friend</strong>
+  </div>
+  <div class="sub-greeting" id="today-summary">Loading your day...</div>
+
+  <!-- Streaks -->
+  <div class="section-label">Streaks</div>
+  <div class="streaks-grid" id="streaks-grid"></div>
+
+  <!-- Weekly Progress -->
+  <div class="section-label">This Week</div>
+  <div class="card">
+    <div class="card-body" style="padding-top:14px">
+      <div class="progress-list" id="progress-list"></div>
+    </div>
+  </div>
+
+  <!-- Today's Tasks -->
+  <div class="section-label">Today's Tasks</div>
+  <div class="card">
+    <div class="card-body" style="padding-top:14px">
+      <div id="today-tasks-list"></div>
+      <button class="add-task-btn" onclick="openAddTask()">+ Add task</button>
+    </div>
+  </div>
+
+  <!-- Calories -->
+  <div class="section-label">Calories Today</div>
+  <div class="cal-widget">
+    <div class="cal-top">
+      <div>
+        <div style="display:flex;align-items:flex-end;gap:4px">
+          <span class="cal-consumed" id="cal-today">0</span>
+          <span class="cal-label">consumed</span>
+        </div>
+      </div>
+      <div class="cal-remaining">
+        <div class="cal-remaining-num" id="cal-remaining">1800</div>
+        <div class="cal-remaining-label">remaining</div>
+      </div>
+    </div>
+    <div class="cal-track"><div class="cal-fill" id="cal-bar" style="width:0%"></div></div>
+    <div class="cal-quick-add">
+      <input class="cal-input" id="cal-input" type="number" placeholder="calories..." inputmode="numeric">
+      <button class="cal-add-btn" onclick="addCalories()">Add</button>
+    </div>
+    <div class="cal-log" id="cal-log"></div>
+  </div>
+
+</div>
+
+<!-- ═══════════════ MSK/CRC ═══════════════ -->
+<div class="page" id="page-msk">
+  <div class="cat-header" style="background:var(--msk)">
+    <h2>MSK / CRC Work</h2>
+    <p>Medical coding & clinical work</p>
+  </div>
+  <div id="msk-content"></div>
+</div>
+
+<!-- ═══════════════ GUITAR ═══════════════ -->
+<div class="page" id="page-guitar">
+  <div class="cat-header" style="background:var(--guitar)">
+    <h2>Guitar</h2>
+    <p>Practice, theory & performance goals</p>
+  </div>
+  <div id="guitar-content"></div>
+</div>
+
+<!-- ═══════════════ APP DEV ═══════════════ -->
+<div class="page" id="page-app">
+  <div class="cat-header" style="background:var(--app)">
+    <h2>Speech Clinic App</h2>
+    <p>Design, build & ship</p>
+  </div>
+  <div id="app-content"></div>
+</div>
+
+<!-- ═══════════════ NURSING ═══════════════ -->
+<div class="page" id="page-nursing">
+  <div class="cat-header" style="background:var(--nurse)">
+    <h2>Nursing School</h2>
+    <p>Study, applications & prerequisites</p>
+  </div>
+  <div id="nursing-content"></div>
+</div>
+
+<!-- ═══════════════ DIET ═══════════════ -->
+<div class="page" id="page-diet">
+  <div class="cat-header" style="background:var(--diet)">
+    <h2>Diet / Cut</h2>
+    <p>2300 TDEE · 1800 cal target · deficit cut</p>
+  </div>
+  <div id="diet-content"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <button class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard', null, true)">
+    <span class="nav-icon">⊞</span>
+    <span class="nav-label">Dashboard</span>
+  </button>
+  <button class="nav-item" id="nav-tasks" onclick="openAddTask()">
+    <span class="nav-icon">＋</span>
+    <span class="nav-label">Add Task</span>
+  </button>
+  <button class="nav-item" id="nav-stats" onclick="showPage('diet', null, true)">
+    <span class="nav-icon">🥗</span>
+    <span class="nav-label">Diet</span>
+  </button>
+</div>
+
+<!-- ADD TASK MODAL -->
+<div class="modal-overlay" id="add-task-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Add Task</div>
+    <input class="modal-input" id="new-task-text" placeholder="What do you need to do?" maxlength="80">
+    <div class="pill-row" id="task-cat-pills"></div>
+    <div class="pill-row" id="task-pri-pills">
+      <button class="pill selected" onclick="selectPill(this,'pri')">High</button>
+      <button class="pill" onclick="selectPill(this,'pri')">Medium</button>
+      <button class="pill" onclick="selectPill(this,'pri')">Low</button>
+    </div>
+    <div class="modal-row" style="margin-top:8px">
+      <button class="modal-btn secondary" onclick="closeModal('add-task-modal')">Cancel</button>
+      <button class="modal-btn primary" onclick="saveTask()">Add Task</button>
+    </div>
+  </div>
+</div>
+
+<!-- STREAK EDIT MODAL -->
+<div class="modal-overlay" id="streak-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="streak-modal-title">Update Streak</div>
+    <input class="modal-input" id="streak-current-input" type="number" placeholder="Current streak (days)" inputmode="numeric">
+    <input class="modal-input" id="streak-best-input" type="number" placeholder="Best streak (days)" inputmode="numeric">
+    <div class="modal-row">
+      <button class="modal-btn secondary" onclick="closeModal('streak-modal')">Cancel</button>
+      <button class="modal-btn primary" onclick="saveStreak()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const CATS = [
+  { id:'msk',     name:'MSK/CRC',    color:'#2C3E6B', bg:'#eef0f8' },
+  { id:'guitar',  name:'Guitar',     color:'#1B5E20', bg:'#eef5ee' },
+  { id:'app',     name:'App Dev',    color:'#4A148C', bg:'#f3eef9' },
+  { id:'nursing', name:'Nursing',    color:'#BF360C', bg:'#fdf0eb' },
+  { id:'diet',    name:'Diet',       color:'#00695C', bg:'#eaf4f2' },
+];
+
+const TODAY = new Date().toISOString().split('T')[0];
+const GOAL_CAL = 1800;
+
+function loadState() {
+  try { return JSON.parse(localStorage.getItem('lt_state') || 'null'); } catch(e){ return null; }
+}
+
+function defaultState() {
+  return {
+    tasks: [],
+    streaks: {
+      msk:     { current:0, best:0 },
+      guitar:  { current:0, best:0 },
+      app:     { current:0, best:0 },
+      nursing: { current:0, best:0 },
+      diet:    { current:0, best:0 },
+    },
+    progress: {
+      msk:     { done:0, total:7 },
+      guitar:  { done:0, total:7 },
+      app:     { done:0, total:7 },
+      nursing: { done:0, total:7 },
+      diet:    { done:0, total:7 },
+    },
+    calories: { date: TODAY, entries: [] },
+    catGoals: {
+      msk:     { monthly:[], weekly:[] },
+      guitar:  { monthly:[], weekly:[] },
+      app:     { monthly:[], weekly:[] },
+      nursing: { monthly:[], weekly:[] },
+      diet:    { monthly:[], weekly:[] },
+    },
+    installDismissed: false,
+  };
+}
+
+let S = loadState() || defaultState();
+
+// Migrate if needed
+if (!S.catGoals) S.catGoals = defaultState().catGoals;
+if (!S.calories || S.calories.date !== TODAY) S.calories = { date: TODAY, entries: [] };
+
+function save() {
+  localStorage.setItem('lt_state', JSON.stringify(S));
+}
+
+// ═══════════════════════════════════════════════
+// ROUTING
+// ═══════════════════════════════════════════════
+let currentPage = 'dashboard';
+let editingStreakId = null;
+
+function showPage(id, tabBtn, fromNav) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  currentPage = id;
+
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  if (tabBtn) tabBtn.classList.add('active');
+  else {
+    const tabs = document.querySelectorAll('.tab-btn');
+    const map = {dashboard:0,msk:1,guitar:2,app:3,nursing:4,diet:5};
+    if (map[id] !== undefined) tabs[map[id]].classList.add('active');
+  }
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if (id === 'dashboard') document.getElementById('nav-dashboard').classList.add('active');
+  if (id === 'diet')      document.getElementById('nav-stats').classList.add('active');
+
+  if (id !== 'dashboard') renderCatPage(id);
+  else renderDashboard();
+}
+
+// ═══════════════════════════════════════════════
+// DATE / GREETING
+// ═══════════════════════════════════════════════
+function setupDate() {
+  const d = new Date();
+  const opts = { weekday:'short', month:'short', day:'numeric' };
+  document.getElementById('date-display').textContent = d.toLocaleDateString('en-US', opts);
+  const h = d.getHours();
+  document.getElementById('time-greeting').textContent =
+    h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+}
+
+// ═══════════════════════════════════════════════
+// DASHBOARD
+// ═══════════════════════════════════════════════
+function renderDashboard() {
+  renderStreaks();
+  renderProgress();
+  renderTodayTasks();
+  renderCalories();
+  updateSummary();
+}
+
+function updateSummary() {
+  const todayTasks = S.tasks.filter(t => t.date === TODAY);
+  const done = todayTasks.filter(t => t.status === 'Complete').length;
+  const total = todayTasks.length;
+  const calPct = Math.round((getTotalCal() / GOAL_CAL) * 100);
+  document.getElementById('today-summary').textContent =
+    total > 0
+      ? `${done}/${total} tasks done today · ${calPct}% of calorie goal`
+      : `No tasks yet today · ${calPct}% of calorie goal`;
+}
+
+// ── STREAKS ──
+function renderStreaks() {
+  const grid = document.getElementById('streaks-grid');
+  grid.innerHTML = CATS.map(cat => {
+    const s = S.streaks[cat.id];
+    return `
+      <div class="streak-card" onclick="openStreakEdit('${cat.id}')">
+        <button class="streak-edit-btn" onclick="event.stopPropagation();openStreakEdit('${cat.id}')">✎</button>
+        <div class="streak-card-dot" style="background:${cat.color}"></div>
+        <div class="streak-card-label">${cat.name}</div>
+        <div class="streak-number" style="color:${cat.color}">${s.current}</div>
+        <div class="streak-unit">day streak</div>
+        <div class="streak-best">Best: ${s.best} days</div>
+      </div>`;
+  }).join('');
+}
+
+function openStreakEdit(id) {
+  editingStreakId = id;
+  const cat = CATS.find(c => c.id === id);
+  const s = S.streaks[id];
+  document.getElementById('streak-modal-title').textContent = `${cat.name} Streak`;
+  document.getElementById('streak-current-input').value = s.current || '';
+  document.getElementById('streak-best-input').value = s.best || '';
+  openModal('streak-modal');
+}
+
+function saveStreak() {
+  const cur = parseInt(document.getElementById('streak-current-input').value) || 0;
+  const best = parseInt(document.getElementById('streak-best-input').value) || 0;
+  S.streaks[editingStreakId] = { current: cur, best: Math.max(best, cur) };
+  save(); closeModal('streak-modal'); renderStreaks(); updateSummary();
+}
+
+// ── PROGRESS ──
+function renderProgress() {
+  const list = document.getElementById('progress-list');
+  list.innerHTML = CATS.map(cat => {
+    const p = S.progress[cat.id];
+    const pct = p.total > 0 ? Math.round((p.done / p.total) * 100) : 0;
+    return `
+      <div class="progress-row">
+        <div class="progress-row-top">
+          <div class="progress-cat-name">
+            <div class="progress-cat-dot" style="background:${cat.color}"></div>
+            ${cat.name}
+          </div>
+          <span class="progress-pct">${pct}%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style="width:${pct}%;background:${cat.color}"></div>
+        </div>
+        <div class="progress-counts">
+          <span class="progress-tally">${p.done}/${p.total} days</span>
+          <div class="progress-bump">
+            <button class="bump-btn" onclick="bumpProgress('${cat.id}',-1)">−</button>
+            <button class="bump-btn" onclick="bumpProgress('${cat.id}',1)">＋</button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function bumpProgress(id, delta) {
+  const p = S.progress[id];
+  p.done = Math.max(0, Math.min(p.total, p.done + delta));
+  save(); renderProgress(); updateSummary();
+}
+
+// ── TODAY TASKS ──
+function renderTodayTasks() {
+  const list = document.getElementById('today-tasks-list');
+  const todayTasks = S.tasks.filter(t => t.date === TODAY);
+  if (todayTasks.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="big">📋</div>No tasks yet — add one below!</div>';
+    return;
+  }
+  list.innerHTML = todayTasks.map(t => {
+    const cat = CATS.find(c => c.id === t.cat);
+    const isDone = t.status === 'Complete';
+    const isIP = t.status === 'In Progress';
+    const statusIcon = isDone ? '✓' : isIP ? '…' : '';
+    return `
+      <div class="task-item" onclick="cycleTask('${t.id}')">
+        <div class="task-check ${isDone ? 'done' : isIP ? 'in-progress' : ''}"></div>
+        <div style="flex:1">
+          <div class="task-text ${isDone ? 'done' : ''}">${t.text}</div>
+          <div class="task-meta">
+            <span class="task-cat-badge" style="background:${cat?.bg};color:${cat?.color}">${cat?.name}</span>
+            <span class="task-priority">${t.priority}</span>
+          </div>
+        </div>
+        <button class="task-cycle-btn" onclick="event.stopPropagation();deleteTask('${t.id}')">✕</button>
+      </div>`;
+  }).join('');
+}
+
+function cycleTask(id) {
+  const t = S.tasks.find(t => t.id === id);
+  if (!t) return;
+  const cycle = ['Not Started','In Progress','Complete'];
+  t.status = cycle[(cycle.indexOf(t.status) + 1) % cycle.length];
+  save(); renderTodayTasks(); updateSummary();
+}
+
+function deleteTask(id) {
+  S.tasks = S.tasks.filter(t => t.id !== id);
+  save(); renderTodayTasks(); updateSummary();
+}
+
+// ── CALORIES ──
+function getTotalCal() {
+  return S.calories.entries.reduce((a,e) => a + e.amount, 0);
+}
+
+function renderCalories() {
+  const total = getTotalCal();
+  const remaining = GOAL_CAL - total;
+  const pct = Math.min(100, Math.round((total / GOAL_CAL) * 100));
+  document.getElementById('cal-today').textContent = total.toLocaleString();
+  document.getElementById('cal-remaining').textContent = Math.max(0, remaining).toLocaleString();
+  document.getElementById('cal-bar').style.width = pct + '%';
+  document.getElementById('cal-bar').style.background = total > GOAL_CAL ? '#ef4444' : 'var(--diet)';
+
+  const log = document.getElementById('cal-log');
+  log.innerHTML = S.calories.entries.slice().reverse().map(e => `
+    <div class="cal-log-item">
+      <span>${e.label}</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-family:'DM Mono',monospace;font-weight:500">${e.amount}</span>
+        <button class="cal-log-del" onclick="removeCalEntry('${e.id}')">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function addCalories() {
+  const input = document.getElementById('cal-input');
+  const val = parseInt(input.value);
+  if (!val || val <= 0) return;
+  S.calories.entries.push({ id: Date.now().toString(), amount: val, label: `Entry ${S.calories.entries.length+1}` });
+  input.value = '';
+  save(); renderCalories(); updateSummary();
+}
+
+function removeCalEntry(id) {
+  S.calories.entries = S.calories.entries.filter(e => e.id !== id);
+  save(); renderCalories(); updateSummary();
+}
+
+document.getElementById('cal-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addCalories();
+});
+
+// ═══════════════════════════════════════════════
+// ADD TASK MODAL
+// ═══════════════════════════════════════════════
+let selectedTaskCat = 'msk';
+let selectedTaskPri = 'High';
+
+function openAddTask() {
+  const pills = document.getElementById('task-cat-pills');
+  pills.innerHTML = CATS.map((c,i) => `
+    <button class="pill ${i===0?'selected':''}" 
+      style="${i===0?`background:${c.color};border-color:${c.color};color:white`:''}"
+      onclick="selectCatPill(this,'${c.id}','${c.color}')">${c.name}</button>`
+  ).join('');
+  selectedTaskCat = 'msk';
+  document.getElementById('new-task-text').value = '';
+  openModal('add-task-modal');
+  setTimeout(() => document.getElementById('new-task-text').focus(), 300);
+}
+
+function selectCatPill(el, id, color) {
+  document.querySelectorAll('#task-cat-pills .pill').forEach(p => {
+    p.classList.remove('selected');
+    p.style.background=''; p.style.borderColor=''; p.style.color='';
+  });
+  el.classList.add('selected');
+  el.style.background = color;
+  el.style.borderColor = color;
+  el.style.color = 'white';
+  selectedTaskCat = id;
+}
+
+function selectPill(el, group) {
+  const row = el.closest('.pill-row');
+  row.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+  el.classList.add('selected');
+  if (group === 'pri') selectedTaskPri = el.textContent;
+}
+
+function saveTask() {
+  const text = document.getElementById('new-task-text').value.trim();
+  if (!text) return;
+  S.tasks.push({
+    id: Date.now().toString(),
+    text, cat: selectedTaskCat,
+    priority: selectedTaskPri,
+    status: 'Not Started',
+    date: TODAY,
+  });
+  save();
+  closeModal('add-task-modal');
+  if (currentPage === 'dashboard') { renderTodayTasks(); updateSummary(); }
+  else renderCatPage(currentPage);
+}
+
+// ═══════════════════════════════════════════════
+// CATEGORY PAGES
+// ═══════════════════════════════════════════════
+function renderCatPage(id) {
+  const cat = CATS.find(c => c.id === id);
+  const el = document.getElementById(id + '-content');
+  const goals = S.catGoals[id];
+  const tasks = S.tasks.filter(t => t.cat === id && t.date === TODAY);
+
+  el.innerHTML = `
+    ${renderGoalSection(id, 'monthly', goals.monthly, cat, 'Monthly Goals')}
+    ${renderGoalSection(id, 'weekly', goals.weekly, cat, 'Weekly Goals')}
+    <div class="section-label">Today's Tasks</div>
+    <div class="card">
+      <div class="card-body" style="padding-top:14px">
+        ${tasks.length === 0
+          ? '<div class="empty-state"><div class="big">✅</div>No tasks today</div>'
+          : tasks.map(t => {
+              const isDone = t.status === 'Complete';
+              const isIP = t.status === 'In Progress';
+              return `
+                <div class="task-item" onclick="cycleTask('${t.id}');renderCatPage('${id}')">
+                  <div class="task-check ${isDone?'done':isIP?'in-progress':''}"></div>
+                  <div style="flex:1">
+                    <div class="task-text ${isDone?'done':''}">${t.text}</div>
+                    <div class="task-meta">
+                      <span class="task-cat-badge" style="background:${cat.bg};color:${cat.color}">${t.priority}</span>
+                    </div>
+                  </div>
+                  <button class="task-cycle-btn" onclick="event.stopPropagation();deleteTask('${t.id}');renderCatPage('${id}')">✕</button>
+                </div>`;
+            }).join('')
+        }
+        <button class="add-task-btn" onclick="openAddTaskForCat('${id}')">+ Add task</button>
+      </div>
+    </div>
+    ${id === 'diet' ? renderDietLog() : ''}
+  `;
+}
+
+function renderGoalSection(catId, period, goalsList, cat, label) {
+  return `
+    <div class="section-label">${label}</div>
+    <div class="card">
+      <div class="card-body" style="padding-top:8px">
+        ${goalsList.length === 0
+          ? `<div style="color:var(--text-3);font-size:13px;padding:8px 0">No goals yet</div>`
+          : goalsList.map(g => {
+              const pct = g.total > 0 ? Math.min(100, Math.round((g.done/g.total)*100)) : 0;
+              return `
+                <div class="weekly-goal-row">
+                  <div class="wg-top">
+                    <span class="wg-name">${g.name}</span>
+                    <span class="wg-pct">${pct}%</span>
+                  </div>
+                  <div class="wg-track"><div class="wg-fill" style="width:${pct}%;background:${cat.color}"></div></div>
+                  <div class="wg-bottom">
+                    <span class="wg-count">${g.done}/${g.total}</span>
+                    <div class="wg-stepper">
+                      <button class="wg-step-btn" onclick="bumpGoal('${catId}','${period}','${g.id}',-1)">−</button>
+                      <button class="wg-step-btn" onclick="bumpGoal('${catId}','${period}','${g.id}',1)">＋</button>
+                    </div>
+                  </div>
+                </div>`;
+            }).join('')
+        }
+        <button class="add-task-btn" onclick="openAddGoal('${catId}','${period}')">+ Add ${period} goal</button>
+      </div>
+    </div>`;
+}
+
+function renderDietLog() {
+  const total = getTotalCal();
+  const pct = Math.min(100, Math.round((total/GOAL_CAL)*100));
+  const remaining = GOAL_CAL - total;
+  return `
+    <div class="section-label">Today's Calories</div>
+    <div class="cal-widget" style="margin-bottom:14px">
+      <div class="cal-top">
+        <div>
+          <div style="display:flex;align-items:flex-end;gap:4px">
+            <span class="cal-consumed" id="cal-today-diet">${total.toLocaleString()}</span>
+            <span class="cal-label">consumed</span>
+          </div>
+        </div>
+        <div class="cal-remaining">
+          <div class="cal-remaining-num">${Math.max(0,remaining).toLocaleString()}</div>
+          <div class="cal-remaining-label">remaining</div>
+        </div>
+      </div>
+      <div class="cal-track"><div class="cal-fill" style="width:${pct}%;background:${total>GOAL_CAL?'#ef4444':'var(--diet)'}"></div></div>
+      <div style="margin-top:10px">
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-2)">
+          <span>Target: ${GOAL_CAL.toLocaleString()} cal</span>
+          <span>TDEE: 2,300 cal</span>
+          <span>Deficit: ${(2300-total).toLocaleString()}</span>
+        </div>
+      </div>
+    </div>`;
+}
+
+function bumpGoal(catId, period, goalId, delta) {
+  const goals = S.catGoals[catId][period];
+  const g = goals.find(g => g.id === goalId);
+  if (g) { g.done = Math.max(0, Math.min(g.total, g.done + delta)); save(); renderCatPage(catId); }
+}
+
+let addingGoalCat = null, addingGoalPeriod = null;
+
+function openAddGoal(catId, period) {
+  addingGoalCat = catId; addingGoalPeriod = period;
+  const cat = CATS.find(c => c.id === catId);
+  document.getElementById('streak-modal-title').textContent = `Add ${period} goal`;
+  document.getElementById('streak-current-input').placeholder = 'Goal name (e.g. Practice 30 min)';
+  document.getElementById('streak-current-input').type = 'text';
+  document.getElementById('streak-current-input').value = '';
+  document.getElementById('streak-best-input').placeholder = 'Target (e.g. 7 for 7 days)';
+  document.getElementById('streak-best-input').type = 'number';
+  document.getElementById('streak-best-input').value = '';
+  // Override save button
+  document.querySelector('#streak-modal .modal-btn.primary').onclick = saveGoal;
+  openModal('streak-modal');
+}
+
+function saveGoal() {
+  const name = document.getElementById('streak-current-input').value.trim();
+  const total = parseInt(document.getElementById('streak-best-input').value) || 7;
+  if (!name) return;
+  S.catGoals[addingGoalCat][addingGoalPeriod].push({
+    id: Date.now().toString(), name, done:0, total
+  });
+  save(); closeModal('streak-modal');
+  renderCatPage(addingGoalCat);
+  document.querySelector('#streak-modal .modal-btn.primary').onclick = saveStreak;
+  document.getElementById('streak-current-input').type = 'number';
+}
+
+function openAddTaskForCat(catId) {
+  openAddTask();
+  setTimeout(() => {
+    const pills = document.querySelectorAll('#task-cat-pills .pill');
+    const idx = CATS.findIndex(c => c.id === catId);
+    if (pills[idx]) selectCatPill(pills[idx], catId, CATS[idx].color);
+  }, 50);
+}
+
+// ═══════════════════════════════════════════════
+// MODALS
+// ═══════════════════════════════════════════════
+function openModal(id)  {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
+});
+
+// ═══════════════════════════════════════════════
+// INSTALL BANNER
+// ═══════════════════════════════════════════════
+function dismissInstall() {
+  S.installDismissed = true; save();
+  document.getElementById('install-banner').style.display = 'none';
+}
+
+function checkInstall() {
+  const isStandalone = window.navigator.standalone === true ||
+    window.matchMedia('(display-mode: standalone)').matches;
+  if (!isStandalone && !S.installDismissed) {
+    document.getElementById('install-banner').style.display = 'flex';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+setupDate();
+checkInstall();
+renderDashboard();
+</script>
+</body>
+</html>

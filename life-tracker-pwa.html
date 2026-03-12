@@ -4,1377 +4,1393 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Life Tracker">
-<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tracker">
+<meta name="theme-color" content="#F9F8F6">
 <title>Life Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --white: #ffffff;
-    --off-white: #f7f7f5;
-    --border: #e8e8e4;
-    --text: #1a1a18;
-    --text-2: #6b6b65;
-    --text-3: #a8a8a0;
+:root {
+  --bg:       #F9F8F6;
+  --surface:  #FFFFFF;
+  --border:   #EBEBЕ7;
+  --border2:  #D8D8D2;
+  --text:     #1C1C1A;
+  --text2:    #6B6B63;
+  --text3:    #ABABА3;
+  --green:    #1A6B3C;
+  --green-bg: #EBF5EF;
+  --red:      #C0392B;
 
-    --msk:     #2C3E6B;
-    --msk-bg:  #eef0f8;
-    --guitar:  #1B5E20;
-    --guitar-bg: #eef5ee;
-    --app:     #4A148C;
-    --app-bg:  #f3eef9;
-    --nurse:   #BF360C;
-    --nurse-bg:#fdf0eb;
-    --diet:    #00695C;
-    --diet-bg: #eaf4f2;
+  /* category colors */
+  --msk:      #1D3557;  --msk-l:    #EAF0F8;
+  --guitar:   #5C4A1E;  --guitar-l: #F5F0E8;
+  --app:      #2D4739;  --app-l:    #EAF2ED;
+  --nurse:    #6B2737;  --nurse-l:  #F5EAED;
+  --diet:     #2C4A3E;  --diet-l:   #E8F2EF;
 
-    --radius: 16px;
-    --radius-sm: 10px;
-    --safe-bottom: env(safe-area-inset-bottom, 0px);
-    --safe-top: env(safe-area-inset-top, 0px);
-  }
+  --radius:   14px;
+  --safe-t:   env(safe-area-inset-top, 0px);
+  --safe-b:   env(safe-area-inset-bottom, 0px);
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--off-white);
-    color: var(--text);
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    overscroll-behavior: none;
-  }
+body {
+  font-family: 'Geist', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100svh;
+  overscroll-behavior: none;
+}
 
-  /* ── NAV ── */
-  .top-bar {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    background: rgba(247,247,245,0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    padding: calc(var(--safe-top) + 14px) 20px 14px;
-    border-bottom: 1px solid var(--border);
-  }
-  .top-bar-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .app-title {
-    font-size: 17px;
-    font-weight: 600;
-    letter-spacing: -0.3px;
-  }
-  .date-chip {
-    font-size: 12px;
-    color: var(--text-2);
-    background: var(--white);
-    border: 1px solid var(--border);
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-family: 'DM Mono', monospace;
-  }
+/* ── HEADER ── */
+.header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(249,248,246,0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: calc(var(--safe-t) + 12px) 18px 0;
+}
+.header-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.header-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 22px; letter-spacing: -0.3px;
+}
+.header-date {
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px; color: var(--text2);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 4px 10px; border-radius: 20px;
+}
 
-  .tab-bar {
-    display: flex;
-    overflow-x: auto;
-    scrollbar-width: none;
-    gap: 6px;
-    padding: 10px 20px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(247,247,245,0.92);
-  }
-  .tab-bar::-webkit-scrollbar { display: none; }
-  .tab-btn {
-    flex-shrink: 0;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 500;
-    border: 1.5px solid var(--border);
-    background: var(--white);
-    color: var(--text-2);
-    cursor: pointer;
-    transition: all 0.15s;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .tab-btn.active {
-    background: var(--text);
-    color: var(--white);
-    border-color: var(--text);
-  }
+/* nav tabs */
+.nav-tabs {
+  display: flex; gap: 2px;
+  overflow-x: auto; scrollbar-width: none;
+  padding-bottom: 1px;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
+.nav-tab {
+  flex-shrink: 0;
+  padding: 8px 14px 10px;
+  font-size: 13px; font-weight: 500;
+  color: var(--text2);
+  border: none; background: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  font-family: 'Geist', sans-serif;
+  white-space: nowrap;
+}
+.nav-tab.active { color: var(--text); border-bottom-color: var(--text); }
 
-  /* ── PAGES ── */
-  .page { display: none; padding: 20px 20px calc(90px + var(--safe-bottom)); }
-  .page.active { display: block; }
+/* ── PAGES ── */
+.page { display: none; padding: 16px 16px calc(80px + var(--safe-b)); }
+.page.active { display: block; animation: fadeIn 0.18s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(4px); } to { opacity:1; transform:translateY(0); } }
 
-  /* ── CARDS ── */
-  .card {
-    background: var(--white);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    margin-bottom: 14px;
-    overflow: hidden;
-  }
-  .card-header {
-    padding: 14px 16px 10px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .card-title {
-    font-size: 13px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    color: var(--text-2);
-  }
-  .card-body { padding: 0 16px 16px; }
+/* ── WEEK OVERVIEW ── */
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.week-col {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 8px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.week-col.today {
+  border-color: var(--text);
+  background: var(--text);
+}
+.week-col.today .week-day { color: rgba(255,255,255,0.6); }
+.week-col.today .week-num { color: white; }
+.week-col.today .week-dot { background: rgba(255,255,255,0.4); }
+.week-day { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text2); margin-bottom: 4px; }
+.week-num { font-size: 18px; font-weight: 600; font-family: 'Geist Mono', monospace; }
+.week-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--border2); margin: 5px auto 0;
+  transition: background 0.2s;
+}
+.week-dot.has-tasks { background: var(--green); }
 
-  /* ── SECTION LABEL ── */
-  .section-label {
-    font-size: 11px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--text-3);
-    margin: 20px 0 8px;
-  }
+/* ── CATEGORY SUMMARY CARDS (weekly overview) ── */
+.cat-summary-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+.cat-summary-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+.cat-summary-card:active { transform: scale(0.99); }
+.cat-summary-top {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.cat-summary-name {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; font-weight: 600;
+}
+.cat-pill {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.cat-summary-counts {
+  font-size: 12px; font-family: 'Geist Mono', monospace; color: var(--text2);
+}
+/* progress bars */
+.bar-group { display: flex; flex-direction: column; gap: 5px; }
+.bar-row { display: flex; align-items: center; gap: 8px; }
+.bar-label { font-size: 10px; color: var(--text3); width: 52px; flex-shrink: 0; font-weight: 500; text-transform: uppercase; letter-spacing: 0.4px; }
+.bar-track { flex: 1; height: 4px; background: var(--border); border-radius: 10px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 10px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); }
+.bar-pct { font-size: 10px; font-family: 'Geist Mono', monospace; color: var(--text3); width: 28px; text-align: right; }
 
-  /* ── DASHBOARD GREETING ── */
-  .greeting {
-    margin-bottom: 6px;
-    font-size: 26px;
-    font-weight: 300;
-    letter-spacing: -0.5px;
-    line-height: 1.2;
-  }
-  .greeting strong { font-weight: 600; }
-  .sub-greeting {
-    font-size: 14px;
-    color: var(--text-2);
-    margin-bottom: 20px;
-  }
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.8px; color: var(--text3);
+  margin: 18px 0 8px; padding: 0 2px;
+}
 
-  /* ── STREAK CARDS ── */
-  .streaks-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 14px;
-  }
-  .streak-card {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px;
-    cursor: pointer;
-    transition: transform 0.1s;
-    position: relative;
-    overflow: hidden;
-  }
-  .streak-card:active { transform: scale(0.97); }
-  .streak-card-dot {
-    width: 8px; height: 8px;
-    border-radius: 50%;
-    margin-bottom: 10px;
-  }
-  .streak-card-label {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-2);
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.4px;
-  }
-  .streak-number {
-    font-size: 32px;
-    font-weight: 600;
-    line-height: 1;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: -1px;
-  }
-  .streak-unit {
-    font-size: 12px;
-    color: var(--text-3);
-    margin-top: 2px;
-  }
-  .streak-best {
-    font-size: 11px;
-    color: var(--text-3);
-    margin-top: 6px;
-  }
-  .streak-edit-btn {
-    position: absolute;
-    top: 10px; right: 10px;
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    background: var(--off-white);
-    border: none;
-    font-size: 11px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-2);
-  }
+/* ── TASK CARD ── */
+.task-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.task-card-header {
+  padding: 10px 14px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+.task-card-title {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+.task-card-badge {
+  font-size: 10px; font-family: 'Geist Mono', monospace;
+  color: var(--text2);
+}
 
-  /* ── PROGRESS BARS ── */
-  .progress-list { display: flex; flex-direction: column; gap: 10px; }
-  .progress-row {
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  .progress-row-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .progress-cat-name {
-    font-size: 13px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 7px;
-  }
-  .progress-cat-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
-  }
-  .progress-pct {
-    font-size: 12px;
-    font-family: 'DM Mono', monospace;
-    color: var(--text-2);
-  }
-  .progress-track {
-    height: 6px;
-    background: var(--border);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .progress-fill {
-    height: 100%;
-    border-radius: 10px;
-    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
-  }
-  .progress-counts {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .progress-tally {
-    font-size: 11px;
-    color: var(--text-3);
-    font-family: 'DM Mono', monospace;
-  }
-  .progress-bump {
-    display: flex;
-    gap: 6px;
-  }
-  .bump-btn {
-    width: 24px; height: 24px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    background: var(--white);
-    font-size: 13px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    color: var(--text-2);
-    transition: all 0.1s;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .bump-btn:active { transform: scale(0.9); background: var(--off-white); }
+/* ── TASK ITEM ── */
+.task-item {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+  user-select: none;
+}
+.task-item:last-child { border-bottom: none; }
+.task-item:active { background: var(--bg); }
+.task-item.done { opacity: 0.45; }
 
-  /* ── CALORIE WIDGET ── */
-  .cal-widget {
-    background: var(--diet-bg);
-    border: 1px solid rgba(0,105,92,0.15);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-bottom: 14px;
-  }
-  .cal-top {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  .cal-consumed {
-    font-size: 38px;
-    font-weight: 600;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: -2px;
-    color: var(--diet);
-    line-height: 1;
-  }
-  .cal-label { font-size: 12px; color: var(--text-2); margin-left: 4px; margin-bottom: 4px; }
-  .cal-remaining {
-    text-align: right;
-  }
-  .cal-remaining-num {
-    font-size: 20px;
-    font-weight: 600;
-    font-family: 'DM Mono', monospace;
-    color: var(--text);
-  }
-  .cal-remaining-label { font-size: 11px; color: var(--text-2); }
-  .cal-track {
-    height: 8px;
-    background: rgba(0,105,92,0.15);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-bottom: 10px;
-  }
-  .cal-fill {
-    height: 100%;
-    background: var(--diet);
-    border-radius: 10px;
-    transition: width 0.4s ease;
-  }
-  .cal-quick-add {
-    display: flex;
-    gap: 8px;
-  }
-  .cal-input {
-    flex: 1;
-    padding: 9px 12px;
-    border-radius: var(--radius-sm);
-    border: 1.5px solid rgba(0,105,92,0.25);
-    background: var(--white);
-    font-size: 15px;
-    font-family: 'DM Mono', monospace;
-    color: var(--text);
-    outline: none;
-  }
-  .cal-input:focus { border-color: var(--diet); }
-  .cal-add-btn {
-    padding: 9px 16px;
-    border-radius: var(--radius-sm);
-    background: var(--diet);
-    color: var(--white);
-    border: none;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    transition: opacity 0.15s;
-  }
-  .cal-add-btn:active { opacity: 0.8; }
-  .cal-log {
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-  .cal-log-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--text-2);
-    padding: 4px 0;
-    border-bottom: 1px solid rgba(0,105,92,0.08);
-  }
-  .cal-log-del {
-    background: none;
-    border: none;
-    color: var(--text-3);
-    font-size: 14px;
-    cursor: pointer;
-    padding: 2px 4px;
-  }
+.task-check {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  flex-shrink: 0; margin-top: 1px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.task-check.checked {
+  background: var(--text); border-color: var(--text);
+}
+.task-check.checked::after {
+  content: '';
+  width: 4px; height: 7px;
+  border: 1.5px solid white;
+  border-top: none; border-left: none;
+  transform: rotate(45deg) translate(-0.5px, -1px);
+}
+.task-body { flex: 1; min-width: 0; }
+.task-text {
+  font-size: 14px; line-height: 1.4;
+  transition: color 0.15s;
+}
+.task-item.done .task-text { text-decoration: line-through; color: var(--text3); }
+.task-tag {
+  display: inline-block; margin-top: 3px;
+  font-size: 10px; font-weight: 600; padding: 2px 7px;
+  border-radius: 20px; letter-spacing: 0.3px;
+}
+.task-recurring-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--text3); flex-shrink: 0; margin-top: 8px;
+}
 
-  /* ── TASK LIST ── */
-  .task-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-    transition: opacity 0.15s;
-  }
-  .task-item:last-child { border-bottom: none; padding-bottom: 0; }
-  .task-item:first-child { padding-top: 0; }
-  .task-check {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    margin-top: 1px;
-    transition: all 0.2s;
-  }
-  .task-check.done {
-    background: var(--text);
-    border-color: var(--text);
-  }
-  .task-check.done::after {
-    content: '';
-    width: 5px; height: 9px;
-    border: 2px solid white;
-    border-top: none; border-left: none;
-    transform: rotate(45deg) translate(-1px,-1px);
-  }
-  .task-check.in-progress {
-    border-color: #f59e0b;
-    background: #fef3c7;
-  }
-  .task-text {
-    flex: 1;
-    font-size: 15px;
-    line-height: 1.4;
-    padding-top: 1px;
-  }
-  .task-text.done {
-    text-decoration: line-through;
-    color: var(--text-3);
-  }
-  .task-meta {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 3px;
-  }
-  .task-cat-badge {
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 20px;
-    letter-spacing: 0.3px;
-  }
-  .task-priority {
-    font-size: 10px;
-    color: var(--text-3);
-  }
-  .task-cycle-btn {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    padding: 2px;
-    flex-shrink: 0;
-    opacity: 0.4;
-    transition: opacity 0.15s;
-  }
-  .task-cycle-btn:hover { opacity: 0.8; }
+/* add task */
+.add-task-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  color: var(--text3); font-size: 13px;
+  transition: color 0.15s;
+}
+.add-task-row:hover { color: var(--text2); }
+.add-task-row svg { flex-shrink: 0; }
 
-  /* ── CAT SECTION (individual pages) ── */
-  .cat-header {
-    border-radius: var(--radius);
-    padding: 20px 18px;
-    margin-bottom: 14px;
-    color: white;
-  }
-  .cat-header h2 { font-size: 22px; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.3px; }
-  .cat-header p { font-size: 13px; opacity: 0.75; }
+/* ── CALORIE WIDGET ── */
+.cal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.cal-main { padding: 16px; }
+.cal-numbers {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.cal-eaten {
+  font-family: 'Instrument Serif', serif;
+  font-size: 42px; line-height: 1; color: var(--text);
+  letter-spacing: -1px;
+}
+.cal-eaten-label { font-size: 12px; color: var(--text2); margin-bottom: 5px; }
+.cal-right { text-align: right; }
+.cal-remain { font-size: 20px; font-weight: 600; font-family: 'Geist Mono', monospace; }
+.cal-remain-label { font-size: 11px; color: var(--text2); margin-top: 1px; }
+.cal-bar-track { height: 6px; background: var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 14px; }
+.cal-bar-fill { height: 100%; border-radius: 10px; background: var(--diet); transition: width 0.4s ease; }
+.cal-entry-row { display: flex; gap: 8px; }
+.cal-input {
+  flex: 1; padding: 10px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px; font-size: 15px;
+  font-family: 'Geist Mono', monospace;
+  background: var(--bg); color: var(--text);
+  outline: none; transition: border-color 0.15s;
+}
+.cal-input:focus { border-color: var(--diet); background: white; }
+.cal-btn {
+  padding: 10px 18px; border-radius: 10px;
+  background: var(--diet); color: white;
+  border: none; font-size: 14px; font-weight: 600;
+  cursor: pointer; font-family: 'Geist', sans-serif;
+  transition: opacity 0.15s;
+}
+.cal-btn:active { opacity: 0.8; }
+.cal-log { border-top: 1px solid var(--border); }
+.cal-log-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 16px; border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.cal-log-item:last-child { border-bottom: none; }
+.cal-log-amt { font-family: 'Geist Mono', monospace; font-weight: 500; }
+.cal-del { background: none; border: none; color: var(--text3); cursor: pointer; padding: 2px 4px; font-size: 14px; }
 
-  .goal-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 11px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .goal-row:last-child { border-bottom: none; }
-  .goal-text { flex: 1; font-size: 14px; line-height: 1.3; }
-  .goal-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
-  .goal-badge {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 9px;
-    border-radius: 20px;
-    font-family: 'DM Mono', monospace;
-    flex-shrink: 0;
-  }
-  .goal-period {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    color: var(--text-3);
-    padding: 12px 16px 4px;
-  }
+/* ── WEEKLY SUMMARY ── */
+.weekly-stats {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px; margin-bottom: 10px;
+}
+.stat-box {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px;
+  text-align: center;
+}
+.stat-num {
+  font-family: 'Geist Mono', monospace;
+  font-size: 22px; font-weight: 600; line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-label { font-size: 10px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.4px; }
 
-  /* ── BOTTOM NAV ── */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: rgba(247,247,245,0.95);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-top: 1px solid var(--border);
-    display: flex;
-    padding: 8px 0 calc(8px + var(--safe-bottom));
-  }
-  .nav-item {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    padding: 6px 4px;
-    cursor: pointer;
-    transition: opacity 0.15s;
-    border: none;
-    background: none;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .nav-item:active { opacity: 0.6; }
-  .nav-icon { font-size: 20px; line-height: 1; }
-  .nav-label { font-size: 10px; font-weight: 500; color: var(--text-3); letter-spacing: 0.2px; }
-  .nav-item.active .nav-label { color: var(--text); }
-  .nav-item.active .nav-icon { filter: none; }
+/* ── GUITAR SPECIFIC ── */
+.practice-toggle {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+.practice-toggle-label { font-size: 15px; font-weight: 500; }
+.toggle-switch {
+  width: 44px; height: 26px; border-radius: 13px;
+  background: var(--border); position: relative;
+  transition: background 0.2s; flex-shrink: 0;
+}
+.toggle-switch.on { background: var(--green); }
+.toggle-knob {
+  position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: white; transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.toggle-switch.on .toggle-knob { transform: translateX(18px); }
 
-  /* ── MODAL ── */
-  .modal-overlay {
-    display: none;
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,0.4);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    align-items: flex-end;
-    justify-content: center;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal-sheet {
-    background: var(--white);
-    border-radius: 22px 22px 0 0;
-    padding: 20px 20px calc(20px + var(--safe-bottom));
-    width: 100%;
-    max-width: 480px;
-    animation: slideUp 0.25s ease;
-  }
-  @keyframes slideUp {
-    from { transform: translateY(100%); opacity: 0; }
-    to   { transform: translateY(0);    opacity: 1; }
-  }
-  .modal-handle {
-    width: 36px; height: 4px;
-    background: var(--border);
-    border-radius: 10px;
-    margin: 0 auto 18px;
-  }
-  .modal-title {
-    font-size: 17px;
-    font-weight: 600;
-    margin-bottom: 16px;
-    letter-spacing: -0.2px;
-  }
-  .modal-input {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: var(--radius-sm);
-    border: 1.5px solid var(--border);
-    font-size: 16px;
-    font-family: 'DM Sans', sans-serif;
-    outline: none;
-    margin-bottom: 10px;
-    background: var(--off-white);
-    color: var(--text);
-  }
-  .modal-input:focus { border-color: var(--text); background: var(--white); }
-  .modal-row { display: flex; gap: 10px; }
-  .modal-btn {
-    flex: 1;
-    padding: 13px;
-    border-radius: var(--radius-sm);
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    font-family: 'DM Sans', sans-serif;
-    transition: opacity 0.15s;
-  }
-  .modal-btn:active { opacity: 0.75; }
-  .modal-btn.primary { background: var(--text); color: var(--white); }
-  .modal-btn.secondary { background: var(--off-white); color: var(--text-2); border: 1px solid var(--border); }
+/* ── NURSING DEADLINES ── */
+.deadline-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px; border-bottom: 1px solid var(--border);
+}
+.deadline-item:last-child { border-bottom: none; }
+.deadline-date {
+  font-family: 'Geist Mono', monospace; font-size: 11px;
+  color: var(--text2); flex-shrink: 0; width: 52px;
+}
+.deadline-text { font-size: 13px; flex: 1; }
+.deadline-status {
+  font-size: 10px; font-weight: 600; padding: 2px 8px;
+  border-radius: 20px; flex-shrink: 0;
+}
+.deadline-status.pending { background: #FEF3C7; color: #92400E; }
+.deadline-status.done { background: var(--green-bg); color: var(--green); }
 
-  /* ── INSTALL BANNER ── */
-  .install-banner {
-    background: var(--text);
-    color: var(--white);
-    border-radius: var(--radius);
-    padding: 14px 16px;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-  .install-icon { font-size: 22px; flex-shrink: 0; }
-  .install-text { flex: 1; }
-  .install-text strong { font-size: 13px; font-weight: 600; display: block; margin-bottom: 2px; }
-  .install-text span { font-size: 12px; opacity: 0.6; }
-  .install-dismiss {
-    background: rgba(255,255,255,0.15);
-    border: none;
-    color: white;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-size: 12px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    flex-shrink: 0;
-  }
+/* ── MODAL ── */
+.overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  align-items: flex-end;
+}
+.overlay.open { display: flex; }
+.sheet {
+  background: var(--surface);
+  border-radius: 22px 22px 0 0;
+  padding: 16px 18px calc(18px + var(--safe-b));
+  width: 100%; max-width: 520px; margin: 0 auto;
+  animation: sheetUp 0.22s cubic-bezier(0.32,0.72,0,1);
+}
+@keyframes sheetUp {
+  from { transform: translateY(110%); }
+  to   { transform: translateY(0); }
+}
+.sheet-handle { width: 32px; height: 4px; border-radius: 10px; background: var(--border2); margin: 0 auto 16px; }
+.sheet-title { font-size: 16px; font-weight: 600; margin-bottom: 14px; letter-spacing: -0.2px; }
+.sheet-input {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-size: 16px; font-family: 'Geist', sans-serif;
+  background: var(--bg); color: var(--text);
+  outline: none; margin-bottom: 10px;
+}
+.sheet-input:focus { border-color: var(--text); background: white; }
+.sheet-row { display: flex; gap: 8px; }
+.sheet-btn {
+  flex: 1; padding: 13px; border-radius: 10px;
+  font-size: 15px; font-weight: 600;
+  border: none; cursor: pointer;
+  font-family: 'Geist', sans-serif; transition: opacity 0.15s;
+}
+.sheet-btn:active { opacity: 0.75; }
+.sheet-btn.primary { background: var(--text); color: white; }
+.sheet-btn.ghost { background: var(--bg); color: var(--text2); border: 1px solid var(--border); }
+.pill-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.spill {
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 12px; font-weight: 500;
+  border: 1.5px solid var(--border);
+  cursor: pointer; background: var(--surface);
+  color: var(--text2); font-family: 'Geist', sans-serif;
+  transition: all 0.1s;
+}
+.spill.on { background: var(--text); color: white; border-color: var(--text); }
 
-  /* ── MISC ── */
-  .empty-state {
-    text-align: center;
-    padding: 30px 20px;
-    color: var(--text-3);
-    font-size: 14px;
-  }
-  .empty-state .big { font-size: 32px; margin-bottom: 8px; }
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: rgba(249,248,246,0.96);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding: 6px 8px calc(6px + var(--safe-b));
+}
+.bnav-btn {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; gap: 3px; padding: 7px 4px;
+  border: none; background: none; cursor: pointer;
+  font-family: 'Geist', sans-serif;
+  transition: opacity 0.15s;
+}
+.bnav-btn:active { opacity: 0.5; }
+.bnav-icon { font-size: 19px; }
+.bnav-label { font-size: 10px; font-weight: 500; color: var(--text3); }
+.bnav-btn.active .bnav-label { color: var(--text); }
 
-  .add-task-btn {
-    width: 100%;
-    padding: 12px;
-    border-radius: var(--radius-sm);
-    border: 1.5px dashed var(--border);
-    background: none;
-    color: var(--text-2);
-    font-size: 14px;
-    cursor: pointer;
-    font-family: 'DM Sans', sans-serif;
-    margin-top: 8px;
-    transition: all 0.15s;
-  }
-  .add-task-btn:active { background: var(--off-white); }
+/* ── MISC ── */
+.empty { padding: 24px; text-align: center; color: var(--text3); font-size: 13px; }
+.divider { height: 1px; background: var(--border); margin: 4px 0; }
+.warning-banner {
+  background: #FEF3C7; border: 1px solid #FDE68A;
+  border-radius: 10px; padding: 10px 14px;
+  font-size: 12px; color: #92400E;
+  margin-bottom: 10px; display: flex; gap: 8px; align-items: flex-start;
+}
 
-  .divider { height: 1px; background: var(--border); margin: 4px 0 12px; }
+.install-tip {
+  background: var(--text); color: white;
+  border-radius: var(--radius); padding: 14px 16px;
+  margin-bottom: 14px; display: none;
+  align-items: center; gap: 12px;
+}
+.install-tip.show { display: flex; }
+.install-tip-text { flex:1; font-size: 13px; line-height: 1.4; }
+.install-tip-text strong { display: block; margin-bottom: 2px; }
+.install-tip-text span { opacity: 0.6; font-size: 12px; }
+.install-close { background: rgba(255,255,255,0.15); border: none; color: white; padding: 5px 10px; border-radius: 7px; font-size: 12px; cursor: pointer; font-family: 'Geist', sans-serif; }
 
-  .pill-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 8px; }
-  .pill {
-    padding: 5px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 500;
-    border: 1.5px solid var(--border);
-    cursor: pointer;
-    background: var(--white);
-    color: var(--text-2);
-    font-family: 'DM Sans', sans-serif;
-    transition: all 0.1s;
-  }
-  .pill.selected { background: var(--text); color: var(--white); border-color: var(--text); }
+/* category page header */
+.cat-page-header {
+  border-radius: var(--radius); padding: 18px;
+  margin-bottom: 14px; color: white;
+}
+.cat-page-header h2 { font-family: 'Instrument Serif', serif; font-size: 24px; margin-bottom: 3px; letter-spacing: -0.3px; }
+.cat-page-header p { font-size: 13px; opacity: 0.7; }
 
-  .weekly-goal-row {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-  }
-  .weekly-goal-row:last-child { border-bottom: none; }
-  .wg-top { display: flex; align-items: center; justify-content: space-between; }
-  .wg-name { font-size: 14px; font-weight: 500; }
-  .wg-pct { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--text-2); }
-  .wg-track { height: 5px; background: var(--border); border-radius: 10px; overflow: hidden; }
-  .wg-fill { height: 100%; border-radius: 10px; transition: width 0.4s ease; }
-  .wg-bottom { display: flex; align-items: center; justify-content: space-between; }
-  .wg-count { font-size: 11px; color: var(--text-3); font-family: 'DM Mono', monospace; }
-  .wg-stepper { display: flex; align-items: center; gap: 8px; }
-  .wg-step-btn {
-    width: 26px; height: 26px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    background: var(--white);
-    font-size: 15px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.1s;
-  }
-  .wg-step-btn:active { background: var(--off-white); transform: scale(0.9); }
+/* feature milestone */
+.milestone-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px; border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.milestone-item:last-child { border-bottom: none; }
+.milestone-check {
+  width: 18px; height: 18px; border-radius: 4px;
+  border: 1.5px solid var(--border2); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.milestone-check.done { background: var(--app); border-color: var(--app); }
+.milestone-check.done::after {
+  content: ''; width: 4px; height: 7px;
+  border: 1.5px solid white; border-top: none; border-left: none;
+  transform: rotate(45deg) translate(-0.5px,-1px);
+}
+.milestone-text { font-size: 13px; flex: 1; }
+.milestone-item.done .milestone-text { text-decoration: line-through; color: var(--text3); }
+
+/* weigh-in */
+.weighin-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px;
+}
+.weighin-label { font-size: 15px; font-weight: 500; }
+.weighin-input-wrap { display: flex; align-items: center; gap: 8px; }
+.weighin-input {
+  width: 80px; padding: 8px 10px;
+  border: 1.5px solid var(--border); border-radius: 8px;
+  font-size: 15px; font-family: 'Geist Mono', monospace;
+  text-align: center; background: var(--bg);
+  outline: none;
+}
+.weighin-input:focus { border-color: var(--diet); }
+.weighin-unit { font-size: 13px; color: var(--text2); }
 </style>
 </head>
 <body>
 
-<!-- TOP BAR -->
-<div class="top-bar">
-  <div class="top-bar-inner">
-    <span class="app-title">Life Tracker</span>
-    <span class="date-chip" id="date-display"></span>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <span class="header-title">Life Tracker</span>
+    <span class="header-date" id="hdr-date"></span>
   </div>
-  <div class="tab-bar" id="tab-bar">
-    <button class="tab-btn active" onclick="showPage('dashboard',this)">Dashboard</button>
-    <button class="tab-btn" onclick="showPage('msk',this)">MSK/CRC</button>
-    <button class="tab-btn" onclick="showPage('guitar',this)">Guitar</button>
-    <button class="tab-btn" onclick="showPage('app',this)">App Dev</button>
-    <button class="tab-btn" onclick="showPage('nursing',this)">Nursing</button>
-    <button class="tab-btn" onclick="showPage('diet',this)">Diet</button>
-  </div>
+  <nav class="nav-tabs">
+    <button class="nav-tab active" onclick="nav('today',this)">Today</button>
+    <button class="nav-tab" onclick="nav('week',this)">Week</button>
+    <button class="nav-tab" onclick="nav('msk',this)">MSK/CRC</button>
+    <button class="nav-tab" onclick="nav('guitar',this)">Guitar</button>
+    <button class="nav-tab" onclick="nav('app',this)">App</button>
+    <button class="nav-tab" onclick="nav('nursing',this)">Nursing</button>
+    <button class="nav-tab" onclick="nav('diet',this)">Diet</button>
+  </nav>
 </div>
 
-<!-- ═══════════════ DASHBOARD ═══════════════ -->
-<div class="page active" id="page-dashboard">
-
-  <div id="install-banner" class="install-banner" style="display:none">
-    <div class="install-icon">📲</div>
-    <div class="install-text">
-      <strong>Add to Home Screen</strong>
-      <span>Tap Share → "Add to Home Screen"</span>
+<!-- ══════════ TODAY ══════════ -->
+<div class="page active" id="page-today">
+  <div class="install-tip" id="install-tip">
+    <div class="install-tip-text">
+      <strong>Save to Home Screen</strong>
+      <span>Safari → Share → Add to Home Screen</span>
     </div>
-    <button class="install-dismiss" onclick="dismissInstall()">Got it</button>
+    <button class="install-close" onclick="closeInstall()">✕</button>
   </div>
 
-  <div class="greeting">
-    Good <span id="time-greeting"></span>,<br><strong id="user-name-display">friend</strong>
-  </div>
-  <div class="sub-greeting" id="today-summary">Loading your day...</div>
+  <div id="streak-warnings"></div>
 
-  <!-- Streaks -->
-  <div class="section-label">Streaks</div>
-  <div class="streaks-grid" id="streaks-grid"></div>
+  <div class="section-label">Today — <span id="today-label"></span></div>
+  <div id="today-tasks-container"></div>
 
-  <!-- Weekly Progress -->
-  <div class="section-label">This Week</div>
-  <div class="card">
-    <div class="card-body" style="padding-top:14px">
-      <div class="progress-list" id="progress-list"></div>
-    </div>
-  </div>
-
-  <!-- Today's Tasks -->
-  <div class="section-label">Today's Tasks</div>
-  <div class="card">
-    <div class="card-body" style="padding-top:14px">
-      <div id="today-tasks-list"></div>
-      <button class="add-task-btn" onclick="openAddTask()">+ Add task</button>
-    </div>
-  </div>
-
-  <!-- Calories -->
-  <div class="section-label">Calories Today</div>
-  <div class="cal-widget">
-    <div class="cal-top">
-      <div>
-        <div style="display:flex;align-items:flex-end;gap:4px">
-          <span class="cal-consumed" id="cal-today">0</span>
-          <span class="cal-label">consumed</span>
+  <div class="section-label">Calories</div>
+  <div class="cal-card">
+    <div class="cal-main">
+      <div class="cal-numbers">
+        <div>
+          <div class="cal-eaten" id="cal-num">0</div>
+          <div class="cal-eaten-label">calories eaten</div>
+        </div>
+        <div class="cal-right">
+          <div class="cal-remain" id="cal-rem">1,800</div>
+          <div class="cal-remain-label">remaining</div>
         </div>
       </div>
-      <div class="cal-remaining">
-        <div class="cal-remaining-num" id="cal-remaining">1800</div>
-        <div class="cal-remaining-label">remaining</div>
+      <div class="cal-bar-track"><div class="cal-bar-fill" id="cal-bar" style="width:0%"></div></div>
+      <div class="cal-entry-row">
+        <input class="cal-input" id="cal-in" type="number" inputmode="numeric" placeholder="add calories...">
+        <button class="cal-btn" onclick="addCal()">Add</button>
       </div>
-    </div>
-    <div class="cal-track"><div class="cal-fill" id="cal-bar" style="width:0%"></div></div>
-    <div class="cal-quick-add">
-      <input class="cal-input" id="cal-input" type="number" placeholder="calories..." inputmode="numeric">
-      <button class="cal-add-btn" onclick="addCalories()">Add</button>
     </div>
     <div class="cal-log" id="cal-log"></div>
   </div>
-
 </div>
 
-<!-- ═══════════════ MSK/CRC ═══════════════ -->
+<!-- ══════════ WEEK ══════════ -->
+<div class="page" id="page-week">
+  <div class="section-label">This Week</div>
+  <div class="week-grid" id="week-grid"></div>
+
+  <div class="section-label">Progress by Category</div>
+  <div class="cat-summary-list" id="week-cats"></div>
+
+  <div class="section-label">Weekly Summary</div>
+  <div class="weekly-stats" id="weekly-stats-grid"></div>
+</div>
+
+<!-- ══════════ MSK/CRC ══════════ -->
 <div class="page" id="page-msk">
-  <div class="cat-header" style="background:var(--msk)">
+  <div class="cat-page-header" style="background:var(--msk)">
     <h2>MSK / CRC Work</h2>
-    <p>Medical coding & clinical work</p>
+    <p>Clinical research · Data pipelines · Patient accrual</p>
   </div>
-  <div id="msk-content"></div>
+  <div id="msk-recurring-section"></div>
+  <div id="msk-tasks-section"></div>
 </div>
 
-<!-- ═══════════════ GUITAR ═══════════════ -->
+<!-- ══════════ GUITAR ══════════ -->
 <div class="page" id="page-guitar">
-  <div class="cat-header" style="background:var(--guitar)">
+  <div class="cat-page-header" style="background:var(--guitar)">
     <h2>Guitar</h2>
-    <p>Practice, theory & performance goals</p>
+    <p>Daily practice · Technique · Theory</p>
   </div>
   <div id="guitar-content"></div>
 </div>
 
-<!-- ═══════════════ APP DEV ═══════════════ -->
+<!-- ══════════ APP ══════════ -->
 <div class="page" id="page-app">
-  <div class="cat-header" style="background:var(--app)">
+  <div class="cat-page-header" style="background:var(--app)">
     <h2>Speech Clinic App</h2>
-    <p>Design, build & ship</p>
+    <p>Frontend · MCP/Claude sessions · Milestones</p>
   </div>
   <div id="app-content"></div>
 </div>
 
-<!-- ═══════════════ NURSING ═══════════════ -->
+<!-- ══════════ NURSING ══════════ -->
 <div class="page" id="page-nursing">
-  <div class="cat-header" style="background:var(--nurse)">
+  <div class="cat-page-header" style="background:var(--nurse)">
     <h2>Nursing School</h2>
-    <p>Study, applications & prerequisites</p>
+    <p>CUNY admission · Prerequisites · Study goals</p>
   </div>
   <div id="nursing-content"></div>
 </div>
 
-<!-- ═══════════════ DIET ═══════════════ -->
+<!-- ══════════ DIET ══════════ -->
 <div class="page" id="page-diet">
-  <div class="cat-header" style="background:var(--diet)">
+  <div class="cat-page-header" style="background:var(--diet)">
     <h2>Diet / Cut</h2>
-    <p>2300 TDEE · 1800 cal target · deficit cut</p>
+    <p>TDEE 2,300 · Target 1,800 cal · Track daily</p>
   </div>
   <div id="diet-content"></div>
 </div>
 
+<!-- ADD TASK SHEET -->
+<div class="overlay" id="add-sheet">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="add-sheet-title">Add Task</div>
+    <input class="sheet-input" id="new-task-input" placeholder="What needs to get done?" maxlength="100">
+    <div class="pill-row" id="cat-pills"></div>
+    <div class="pill-row" id="type-pills">
+      <button class="spill on" onclick="pickType(this,'one-time')">One-time</button>
+      <button class="spill" onclick="pickType(this,'recurring')">Recurring</button>
+    </div>
+    <div class="sheet-row">
+      <button class="sheet-btn ghost" onclick="closeSheet('add-sheet')">Cancel</button>
+      <button class="sheet-btn primary" onclick="commitTask()">Add</button>
+    </div>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <div class="bottom-nav">
-  <button class="nav-item active" id="nav-dashboard" onclick="showPage('dashboard', null, true)">
-    <span class="nav-icon">⊞</span>
-    <span class="nav-label">Dashboard</span>
+  <button class="bnav-btn active" id="bn-today" onclick="nav('today',null,true)">
+    <span class="bnav-icon">◈</span>
+    <span class="bnav-label">Today</span>
   </button>
-  <button class="nav-item" id="nav-tasks" onclick="openAddTask()">
-    <span class="nav-icon">＋</span>
-    <span class="nav-label">Add Task</span>
+  <button class="bnav-btn" id="bn-week" onclick="nav('week',null,true)">
+    <span class="bnav-icon">◫</span>
+    <span class="bnav-label">Week</span>
   </button>
-  <button class="nav-item" id="nav-stats" onclick="showPage('diet', null, true)">
-    <span class="nav-icon">🥗</span>
-    <span class="nav-label">Diet</span>
+  <button class="bnav-btn" id="bn-add" onclick="openAddTask()">
+    <span class="bnav-icon" style="font-size:22px">+</span>
+    <span class="bnav-label">Add</span>
   </button>
-</div>
-
-<!-- ADD TASK MODAL -->
-<div class="modal-overlay" id="add-task-modal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title">Add Task</div>
-    <input class="modal-input" id="new-task-text" placeholder="What do you need to do?" maxlength="80">
-    <div class="pill-row" id="task-cat-pills"></div>
-    <div class="pill-row" id="task-pri-pills">
-      <button class="pill selected" onclick="selectPill(this,'pri')">High</button>
-      <button class="pill" onclick="selectPill(this,'pri')">Medium</button>
-      <button class="pill" onclick="selectPill(this,'pri')">Low</button>
-    </div>
-    <div class="modal-row" style="margin-top:8px">
-      <button class="modal-btn secondary" onclick="closeModal('add-task-modal')">Cancel</button>
-      <button class="modal-btn primary" onclick="saveTask()">Add Task</button>
-    </div>
-  </div>
-</div>
-
-<!-- STREAK EDIT MODAL -->
-<div class="modal-overlay" id="streak-modal">
-  <div class="modal-sheet">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="streak-modal-title">Update Streak</div>
-    <input class="modal-input" id="streak-current-input" type="number" placeholder="Current streak (days)" inputmode="numeric">
-    <input class="modal-input" id="streak-best-input" type="number" placeholder="Best streak (days)" inputmode="numeric">
-    <div class="modal-row">
-      <button class="modal-btn secondary" onclick="closeModal('streak-modal')">Cancel</button>
-      <button class="modal-btn primary" onclick="saveStreak()">Save</button>
-    </div>
-  </div>
+  <button class="bnav-btn" id="bn-diet" onclick="nav('diet',null,true)">
+    <span class="bnav-icon">◎</span>
+    <span class="bnav-label">Diet</span>
+  </button>
+  <button class="bnav-btn" id="bn-msk" onclick="nav('msk',null,true)">
+    <span class="bnav-icon">◉</span>
+    <span class="bnav-label">MSK</span>
+  </button>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// CONSTANTS & DEFAULTS
+// ══════════════════════════════════════════════
+const GOAL_CAL = 1800;
+const TODAY_STR = new Date().toISOString().split('T')[0];
+const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const TODAY_DAY = DAY_NAMES[new Date().getDay()];
+
 const CATS = [
-  { id:'msk',     name:'MSK/CRC',    color:'#2C3E6B', bg:'#eef0f8' },
-  { id:'guitar',  name:'Guitar',     color:'#1B5E20', bg:'#eef5ee' },
-  { id:'app',     name:'App Dev',    color:'#4A148C', bg:'#f3eef9' },
-  { id:'nursing', name:'Nursing',    color:'#BF360C', bg:'#fdf0eb' },
-  { id:'diet',    name:'Diet',       color:'#00695C', bg:'#eaf4f2' },
+  { id:'msk',     name:'MSK/CRC',  color:'#1D3557', bg:'#EAF0F8' },
+  { id:'guitar',  name:'Guitar',   color:'#5C4A1E', bg:'#F5F0E8' },
+  { id:'app',     name:'App Dev',  color:'#2D4739', bg:'#EAF2ED' },
+  { id:'nursing', name:'Nursing',  color:'#6B2737', bg:'#F5EAED' },
+  { id:'diet',    name:'Diet',     color:'#2C4A3E', bg:'#E8F2EF' },
 ];
 
-const TODAY = new Date().toISOString().split('T')[0];
-const GOAL_CAL = 1800;
+// Pre-loaded tasks
+const SEED_TASKS = [
+  // MSK recurring
+  { id:'msk-r1', cat:'msk', text:'TCC Bladder report', recurring:true, done:false },
+  { id:'msk-r2', cat:'msk', text:'Weekly kit prep', recurring:true, done:false },
+  { id:'msk-r3', cat:'msk', text:'Research draws', recurring:true, done:false },
+  // MSK one-time
+  { id:'msk-1', cat:'msk', text:'PSMA-PET accrual steps — standard PET, 1 target lesion, amendment in ~3 weeks', recurring:false, done:false },
+  { id:'msk-2', cat:'msk', text:'CBioPortal: anchor date + one-time file, map of dates & MRNs from separate form', recurring:false, done:false },
+  { id:'msk-3', cat:'msk', text:'Full production pipeline from Databricks catalogue', recurring:false, done:false },
+  { id:'msk-4', cat:'msk', text:'PBMCs + Stool (no ACCESS)', recurring:false, done:false },
+  { id:'msk-5', cat:'msk', text:'Email Dr. Iyer & Dr. Keegan re: patient accrual', recurring:false, done:false },
+  { id:'msk-6', cat:'msk', text:'Check if Donna Leive has appt yet — TDxD PBMC draw', recurring:false, done:false },
+  { id:'msk-7', cat:'msk', text:'Bladder meeting 8am (Thursday)', recurring:false, done:false },
+  { id:'msk-8', cat:'msk', text:'GU team meeting 2:30pm (Thursday)', recurring:false, done:false },
+  { id:'msk-9', cat:'msk', text:'Figure out EV+P workflow — pivot tables onto master MRN demographic table', recurring:false, done:false },
+  { id:'msk-10', cat:'msk', text:'Message Monmouth research team — Miguel Escalante consent to 12-245', recurring:false, done:false },
+  { id:'msk-11', cat:'msk', text:'Fix EV tracker from Michal list — audit on EPIC', recurring:false, done:false },
+  { id:'msk-12', cat:'msk', text:'ETL pipeline for prospective REDCap DB — hammer out issues', recurring:false, done:false },
+  // Guitar
+  { id:'guitar-1', cat:'guitar', text:'Practice session (30–60 min)', recurring:true, done:false },
+  { id:'guitar-2', cat:'guitar', text:'Scales — major & minor patterns', recurring:true, done:false },
+  { id:'guitar-3', cat:'guitar', text:'Chord transitions drill', recurring:true, done:false },
+  { id:'guitar-4', cat:'guitar', text:'Music theory study', recurring:false, done:false },
+  // App
+  { id:'app-1', cat:'app', text:'Open app project — work on frontend', recurring:true, done:false },
+  { id:'app-2', cat:'app', text:'Log Claude / MCP session notes', recurring:true, done:false },
+  // Nursing
+  { id:'nurse-1', cat:'nursing', text:'Study session — 1 hour minimum', recurring:true, done:false },
+  { id:'nurse-2', cat:'nursing', text:'Review CUNY nursing requirements', recurring:false, done:false },
+  { id:'nurse-3', cat:'nursing', text:'Check prerequisite course completion status', recurring:false, done:false },
+  // Diet
+  { id:'diet-1', cat:'diet', text:'Log all meals in tracker', recurring:true, done:false },
+  { id:'diet-2', cat:'diet', text:'Morning weigh-in', recurring:true, done:false },
+];
 
+const SEED_MILESTONES = [
+  { id:'m1', text:'User auth flow complete', done:false },
+  { id:'m2', text:'Patient intake form UI', done:false },
+  { id:'m3', text:'Connect backend API to frontend', done:false },
+  { id:'m4', text:'First test session with real user', done:false },
+  { id:'m5', text:'App Store screenshots & description', done:false },
+];
+
+const SEED_DEADLINES = [
+  { id:'d1', text:'CUNY nursing application open', date:'Spring 2025', done:false },
+  { id:'d2', text:'Prerequisite: Anatomy & Physiology', date:'In progress', done:false },
+  { id:'d3', text:'Prerequisite: Microbiology', date:'Planned', done:false },
+  { id:'d4', text:'Submit CUNY application', date:'TBD', done:false },
+];
+
+// ══════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════
 function loadState() {
-  try { return JSON.parse(localStorage.getItem('lt_state') || 'null'); } catch(e){ return null; }
+  try { return JSON.parse(localStorage.getItem('lt2') || 'null'); } catch(e){ return null; }
 }
-
 function defaultState() {
   return {
-    tasks: [],
-    streaks: {
-      msk:     { current:0, best:0 },
-      guitar:  { current:0, best:0 },
-      app:     { current:0, best:0 },
-      nursing: { current:0, best:0 },
-      diet:    { current:0, best:0 },
-    },
-    progress: {
-      msk:     { done:0, total:7 },
-      guitar:  { done:0, total:7 },
-      app:     { done:0, total:7 },
-      nursing: { done:0, total:7 },
-      diet:    { done:0, total:7 },
-    },
-    calories: { date: TODAY, entries: [] },
-    catGoals: {
-      msk:     { monthly:[], weekly:[] },
-      guitar:  { monthly:[], weekly:[] },
-      app:     { monthly:[], weekly:[] },
-      nursing: { monthly:[], weekly:[] },
-      diet:    { monthly:[], weekly:[] },
-    },
+    tasks: JSON.parse(JSON.stringify(SEED_TASKS)),
+    cal: { date: TODAY_STR, entries: [] },
+    milestones: JSON.parse(JSON.stringify(SEED_MILESTONES)),
+    deadlines: JSON.parse(JSON.stringify(SEED_DEADLINES)),
+    guitarPracticed: {},   // date -> bool
+    studyHours: {},        // week -> number
+    weeklyStudyGoal: 7,
+    streaks: { msk:0, guitar:0, app:0, nursing:0, diet:0 },
+    bestStreaks: { msk:0, guitar:0, app:0, nursing:0, diet:0 },
+    lastActive: {},        // cat -> date
+    weighIn: {},           // date -> lbs
     installDismissed: false,
+    appSessions: [],       // {date, note}
   };
 }
 
 let S = loadState() || defaultState();
 
-// Migrate if needed
-if (!S.catGoals) S.catGoals = defaultState().catGoals;
-if (!S.calories || S.calories.date !== TODAY) S.calories = { date: TODAY, entries: [] };
+// migrations
+if (!S.milestones) S.milestones = JSON.parse(JSON.stringify(SEED_MILESTONES));
+if (!S.deadlines)  S.deadlines  = JSON.parse(JSON.stringify(SEED_DEADLINES));
+if (!S.guitarPracticed) S.guitarPracticed = {};
+if (!S.appSessions) S.appSessions = [];
+if (!S.weighIn) S.weighIn = {};
+if (!S.weeklyStudyGoal) S.weeklyStudyGoal = 7;
+if (S.cal.date !== TODAY_STR) S.cal = { date: TODAY_STR, entries: [] };
+// ensure seed tasks exist
+SEED_TASKS.forEach(st => {
+  if (!S.tasks.find(t => t.id === st.id)) S.tasks.push(JSON.parse(JSON.stringify(st)));
+});
 
-function save() {
-  localStorage.setItem('lt_state', JSON.stringify(S));
-}
+function save() { localStorage.setItem('lt2', JSON.stringify(S)); }
 
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 // ROUTING
-// ═══════════════════════════════════════════════
-let currentPage = 'dashboard';
-let editingStreakId = null;
+// ══════════════════════════════════════════════
+let currentPage = 'today';
 
-function showPage(id, tabBtn, fromNav) {
+function nav(id, tabEl, fromBnav) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   currentPage = id;
 
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  if (tabBtn) tabBtn.classList.add('active');
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  if (tabEl) { tabEl.classList.add('active'); }
   else {
-    const tabs = document.querySelectorAll('.tab-btn');
-    const map = {dashboard:0,msk:1,guitar:2,app:3,nursing:4,diet:5};
-    if (map[id] !== undefined) tabs[map[id]].classList.add('active');
+    const map = {today:0,week:1,msk:2,guitar:3,app:4,nursing:5,diet:6};
+    document.querySelectorAll('.nav-tab')[map[id]]?.classList.add('active');
   }
 
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  if (id === 'dashboard') document.getElementById('nav-dashboard').classList.add('active');
-  if (id === 'diet')      document.getElementById('nav-stats').classList.add('active');
+  ['today','week','diet','msk'].forEach(k => {
+    document.getElementById('bn-'+k)?.classList.remove('active');
+  });
+  if (['today','week','diet','msk'].includes(id)) {
+    document.getElementById('bn-'+id)?.classList.add('active');
+  }
 
-  if (id !== 'dashboard') renderCatPage(id);
-  else renderDashboard();
+  renderPage(id);
 }
 
-// ═══════════════════════════════════════════════
-// DATE / GREETING
-// ═══════════════════════════════════════════════
-function setupDate() {
+function renderPage(id) {
+  if (id === 'today')   renderToday();
+  if (id === 'week')    renderWeek();
+  if (id === 'msk')     renderMsk();
+  if (id === 'guitar')  renderGuitar();
+  if (id === 'app')     renderApp();
+  if (id === 'nursing') renderNursing();
+  if (id === 'diet')    renderDiet();
+}
+
+// ══════════════════════════════════════════════
+// HEADER DATE
+// ══════════════════════════════════════════════
+function setupHeader() {
   const d = new Date();
-  const opts = { weekday:'short', month:'short', day:'numeric' };
-  document.getElementById('date-display').textContent = d.toLocaleDateString('en-US', opts);
-  const h = d.getHours();
-  document.getElementById('time-greeting').textContent =
-    h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+  document.getElementById('hdr-date').textContent =
+    d.toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+  document.getElementById('today-label').textContent =
+    d.toLocaleDateString('en-US', {weekday:'long', month:'long', day:'numeric'});
 }
 
-// ═══════════════════════════════════════════════
-// DASHBOARD
-// ═══════════════════════════════════════════════
-function renderDashboard() {
-  renderStreaks();
-  renderProgress();
+// ══════════════════════════════════════════════
+// TODAY PAGE
+// ══════════════════════════════════════════════
+function renderToday() {
+  renderStreakWarnings();
   renderTodayTasks();
-  renderCalories();
-  updateSummary();
+  renderCalWidget();
 }
 
-function updateSummary() {
-  const todayTasks = S.tasks.filter(t => t.date === TODAY);
-  const done = todayTasks.filter(t => t.status === 'Complete').length;
-  const total = todayTasks.length;
-  const calPct = Math.round((getTotalCal() / GOAL_CAL) * 100);
-  document.getElementById('today-summary').textContent =
-    total > 0
-      ? `${done}/${total} tasks done today · ${calPct}% of calorie goal`
-      : `No tasks yet today · ${calPct}% of calorie goal`;
+function renderStreakWarnings() {
+  const box = document.getElementById('streak-warnings');
+  const warnings = [];
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yStr = yesterday.toISOString().split('T')[0];
+  CATS.forEach(c => {
+    const last = S.lastActive[c.id];
+    if (S.streaks[c.id] > 0 && last && last !== TODAY_STR && last !== yStr) {
+      warnings.push(`⚠️ <strong>${c.name}</strong> streak at risk — last active ${last}`);
+    }
+  });
+  box.innerHTML = warnings.map(w =>
+    `<div class="warning-banner"><span>${w}</span></div>`
+  ).join('');
 }
 
-// ── STREAKS ──
-function renderStreaks() {
-  const grid = document.getElementById('streaks-grid');
-  grid.innerHTML = CATS.map(cat => {
-    const s = S.streaks[cat.id];
-    return `
-      <div class="streak-card" onclick="openStreakEdit('${cat.id}')">
-        <button class="streak-edit-btn" onclick="event.stopPropagation();openStreakEdit('${cat.id}')">✎</button>
-        <div class="streak-card-dot" style="background:${cat.color}"></div>
-        <div class="streak-card-label">${cat.name}</div>
-        <div class="streak-number" style="color:${cat.color}">${s.current}</div>
-        <div class="streak-unit">day streak</div>
-        <div class="streak-best">Best: ${s.best} days</div>
-      </div>`;
-  }).join('');
-}
-
-function openStreakEdit(id) {
-  editingStreakId = id;
-  const cat = CATS.find(c => c.id === id);
-  const s = S.streaks[id];
-  document.getElementById('streak-modal-title').textContent = `${cat.name} Streak`;
-  document.getElementById('streak-current-input').value = s.current || '';
-  document.getElementById('streak-best-input').value = s.best || '';
-  openModal('streak-modal');
-}
-
-function saveStreak() {
-  const cur = parseInt(document.getElementById('streak-current-input').value) || 0;
-  const best = parseInt(document.getElementById('streak-best-input').value) || 0;
-  S.streaks[editingStreakId] = { current: cur, best: Math.max(best, cur) };
-  save(); closeModal('streak-modal'); renderStreaks(); updateSummary();
-}
-
-// ── PROGRESS ──
-function renderProgress() {
-  const list = document.getElementById('progress-list');
-  list.innerHTML = CATS.map(cat => {
-    const p = S.progress[cat.id];
-    const pct = p.total > 0 ? Math.round((p.done / p.total) * 100) : 0;
-    return `
-      <div class="progress-row">
-        <div class="progress-row-top">
-          <div class="progress-cat-name">
-            <div class="progress-cat-dot" style="background:${cat.color}"></div>
-            ${cat.name}
-          </div>
-          <span class="progress-pct">${pct}%</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill" style="width:${pct}%;background:${cat.color}"></div>
-        </div>
-        <div class="progress-counts">
-          <span class="progress-tally">${p.done}/${p.total} days</span>
-          <div class="progress-bump">
-            <button class="bump-btn" onclick="bumpProgress('${cat.id}',-1)">−</button>
-            <button class="bump-btn" onclick="bumpProgress('${cat.id}',1)">＋</button>
-          </div>
-        </div>
-      </div>`;
-  }).join('');
-}
-
-function bumpProgress(id, delta) {
-  const p = S.progress[id];
-  p.done = Math.max(0, Math.min(p.total, p.done + delta));
-  save(); renderProgress(); updateSummary();
-}
-
-// ── TODAY TASKS ──
 function renderTodayTasks() {
-  const list = document.getElementById('today-tasks-list');
-  const todayTasks = S.tasks.filter(t => t.date === TODAY);
-  if (todayTasks.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="big">📋</div>No tasks yet — add one below!</div>';
-    return;
-  }
-  list.innerHTML = todayTasks.map(t => {
-    const cat = CATS.find(c => c.id === t.cat);
-    const isDone = t.status === 'Complete';
-    const isIP = t.status === 'In Progress';
-    const statusIcon = isDone ? '✓' : isIP ? '…' : '';
-    return `
-      <div class="task-item" onclick="cycleTask('${t.id}')">
-        <div class="task-check ${isDone ? 'done' : isIP ? 'in-progress' : ''}"></div>
-        <div style="flex:1">
-          <div class="task-text ${isDone ? 'done' : ''}">${t.text}</div>
-          <div class="task-meta">
-            <span class="task-cat-badge" style="background:${cat?.bg};color:${cat?.color}">${cat?.name}</span>
-            <span class="task-priority">${t.priority}</span>
-          </div>
+  const container = document.getElementById('today-tasks-container');
+  const catOrder = ['msk','guitar','app','nursing','diet'];
+  let html = '';
+  catOrder.forEach(catId => {
+    const cat = CATS.find(c => c.id === catId);
+    const tasks = S.tasks.filter(t => t.cat === catId);
+    if (!tasks.length) return;
+    const done = tasks.filter(t => t.done).length;
+    html += `
+      <div class="task-card" style="margin-bottom:10px">
+        <div class="task-card-header" style="border-left: 3px solid ${cat.color}">
+          <span class="task-card-title" style="color:${cat.color}">${cat.name}</span>
+          <span class="task-card-badge">${done}/${tasks.length}</span>
         </div>
-        <button class="task-cycle-btn" onclick="event.stopPropagation();deleteTask('${t.id}')">✕</button>
+        ${tasks.map(t => taskItemHTML(t, cat)).join('')}
+        <div class="add-task-row" onclick="openAddTaskFor('${catId}')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Add task
+        </div>
       </div>`;
-  }).join('');
+  });
+  container.innerHTML = html || '<div class="empty">No tasks loaded</div>';
 }
 
-function cycleTask(id) {
+function taskItemHTML(t, cat) {
+  return `
+    <div class="task-item ${t.done ? 'done' : ''}" onclick="toggleTask('${t.id}')">
+      <div class="task-check ${t.done ? 'checked' : ''}"></div>
+      <div class="task-body">
+        <div class="task-text">${t.text}</div>
+        ${t.recurring ? `<span class="task-tag" style="background:${cat.bg};color:${cat.color}">recurring</span>` : ''}
+      </div>
+    </div>`;
+}
+
+function toggleTask(id) {
   const t = S.tasks.find(t => t.id === id);
   if (!t) return;
-  const cycle = ['Not Started','In Progress','Complete'];
-  t.status = cycle[(cycle.indexOf(t.status) + 1) % cycle.length];
-  save(); renderTodayTasks(); updateSummary();
+  t.done = !t.done;
+  // update last active for streak tracking
+  if (t.done) S.lastActive[t.cat] = TODAY_STR;
+  save();
+  renderPage(currentPage);
 }
 
-function deleteTask(id) {
-  S.tasks = S.tasks.filter(t => t.id !== id);
-  save(); renderTodayTasks(); updateSummary();
-}
+// ══════════════════════════════════════════════
+// CALORIE WIDGET
+// ══════════════════════════════════════════════
+function getCalTotal() { return S.cal.entries.reduce((a,e) => a+e.amt, 0); }
 
-// ── CALORIES ──
-function getTotalCal() {
-  return S.calories.entries.reduce((a,e) => a + e.amount, 0);
-}
-
-function renderCalories() {
-  const total = getTotalCal();
-  const remaining = GOAL_CAL - total;
-  const pct = Math.min(100, Math.round((total / GOAL_CAL) * 100));
-  document.getElementById('cal-today').textContent = total.toLocaleString();
-  document.getElementById('cal-remaining').textContent = Math.max(0, remaining).toLocaleString();
-  document.getElementById('cal-bar').style.width = pct + '%';
-  document.getElementById('cal-bar').style.background = total > GOAL_CAL ? '#ef4444' : 'var(--diet)';
-
+function renderCalWidget() {
+  const total = getCalTotal();
+  const rem = Math.max(0, GOAL_CAL - total);
+  const pct = Math.min(100, (total / GOAL_CAL) * 100);
+  document.getElementById('cal-num').textContent = total.toLocaleString();
+  document.getElementById('cal-rem').textContent = rem.toLocaleString();
+  const bar = document.getElementById('cal-bar');
+  bar.style.width = pct + '%';
+  bar.style.background = total > GOAL_CAL ? '#C0392B' : 'var(--diet)';
   const log = document.getElementById('cal-log');
-  log.innerHTML = S.calories.entries.slice().reverse().map(e => `
+  log.innerHTML = S.cal.entries.slice().reverse().map(e => `
     <div class="cal-log-item">
-      <span>${e.label}</span>
-      <div style="display:flex;align-items:center;gap:6px">
-        <span style="font-family:'DM Mono',monospace;font-weight:500">${e.amount}</span>
-        <button class="cal-log-del" onclick="removeCalEntry('${e.id}')">✕</button>
+      <span style="color:var(--text2)">${e.label}</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="cal-log-amt">${e.amt} cal</span>
+        <button class="cal-del" onclick="delCal('${e.id}')">✕</button>
       </div>
     </div>`).join('');
 }
 
-function addCalories() {
-  const input = document.getElementById('cal-input');
+function addCal() {
+  const input = document.getElementById('cal-in');
   const val = parseInt(input.value);
   if (!val || val <= 0) return;
-  S.calories.entries.push({ id: Date.now().toString(), amount: val, label: `Entry ${S.calories.entries.length+1}` });
+  const n = S.cal.entries.length + 1;
+  S.cal.entries.push({ id: Date.now()+'', amt: val, label: `Entry ${n}` });
   input.value = '';
-  save(); renderCalories(); updateSummary();
+  save(); renderCalWidget();
+  if (currentPage === 'diet') renderDiet();
 }
 
-function removeCalEntry(id) {
-  S.calories.entries = S.calories.entries.filter(e => e.id !== id);
-  save(); renderCalories(); updateSummary();
+function delCal(id) {
+  S.cal.entries = S.cal.entries.filter(e => e.id !== id);
+  save(); renderCalWidget();
+  if (currentPage === 'diet') renderDiet();
 }
 
-document.getElementById('cal-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') addCalories();
+document.getElementById('cal-in').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addCal();
 });
 
-// ═══════════════════════════════════════════════
-// ADD TASK MODAL
-// ═══════════════════════════════════════════════
-let selectedTaskCat = 'msk';
-let selectedTaskPri = 'High';
-
-function openAddTask() {
-  const pills = document.getElementById('task-cat-pills');
-  pills.innerHTML = CATS.map((c,i) => `
-    <button class="pill ${i===0?'selected':''}" 
-      style="${i===0?`background:${c.color};border-color:${c.color};color:white`:''}"
-      onclick="selectCatPill(this,'${c.id}','${c.color}')">${c.name}</button>`
-  ).join('');
-  selectedTaskCat = 'msk';
-  document.getElementById('new-task-text').value = '';
-  openModal('add-task-modal');
-  setTimeout(() => document.getElementById('new-task-text').focus(), 300);
+// ══════════════════════════════════════════════
+// WEEK PAGE
+// ══════════════════════════════════════════════
+function renderWeek() {
+  renderWeekGrid();
+  renderWeekCats();
+  renderWeeklyStats();
 }
 
-function selectCatPill(el, id, color) {
-  document.querySelectorAll('#task-cat-pills .pill').forEach(p => {
-    p.classList.remove('selected');
-    p.style.background=''; p.style.borderColor=''; p.style.color='';
-  });
-  el.classList.add('selected');
-  el.style.background = color;
-  el.style.borderColor = color;
-  el.style.color = 'white';
-  selectedTaskCat = id;
+function renderWeekGrid() {
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const monday = new Date(today); monday.setDate(today.getDate() - ((dayOfWeek + 6) % 7));
+  const grid = document.getElementById('week-grid');
+  let html = '';
+  for (let i = 0; i < 5; i++) {
+    const d = new Date(monday); d.setDate(monday.getDate() + i);
+    const dStr = d.toISOString().split('T')[0];
+    const isToday = dStr === TODAY_STR;
+    const hasTasks = S.tasks.some(t => t.done && S.lastActive[t.cat] === dStr);
+    html += `
+      <div class="week-col ${isToday ? 'today' : ''}">
+        <div class="week-day">${DAY_NAMES[d.getDay()]}</div>
+        <div class="week-num">${d.getDate()}</div>
+        <div class="week-dot ${isToday || hasTasks ? 'has-tasks' : ''}"></div>
+      </div>`;
+  }
+  grid.innerHTML = html;
 }
 
-function selectPill(el, group) {
-  const row = el.closest('.pill-row');
-  row.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
-  el.classList.add('selected');
-  if (group === 'pri') selectedTaskPri = el.textContent;
-}
+function renderWeekCats() {
+  const container = document.getElementById('week-cats');
+  container.innerHTML = CATS.map(cat => {
+    const tasks = S.tasks.filter(t => t.cat === cat.id);
+    const total = tasks.length;
+    const done = tasks.filter(t => t.done).length;
+    const dailyPct = total > 0 ? Math.round((done/total)*100) : 0;
 
-function saveTask() {
-  const text = document.getElementById('new-task-text').value.trim();
-  if (!text) return;
-  S.tasks.push({
-    id: Date.now().toString(),
-    text, cat: selectedTaskCat,
-    priority: selectedTaskPri,
-    status: 'Not Started',
-    date: TODAY,
-  });
-  save();
-  closeModal('add-task-modal');
-  if (currentPage === 'dashboard') { renderTodayTasks(); updateSummary(); }
-  else renderCatPage(currentPage);
-}
+    // weekly = done tasks / total recurring tasks * 100
+    const recurring = tasks.filter(t => t.recurring);
+    const recurDone = recurring.filter(t => t.done).length;
+    const weeklyPct = recurring.length > 0 ? Math.round((recurDone/recurring.length)*100) : 0;
 
-// ═══════════════════════════════════════════════
-// CATEGORY PAGES
-// ═══════════════════════════════════════════════
-function renderCatPage(id) {
-  const cat = CATS.find(c => c.id === id);
-  const el = document.getElementById(id + '-content');
-  const goals = S.catGoals[id];
-  const tasks = S.tasks.filter(t => t.cat === id && t.date === TODAY);
-
-  el.innerHTML = `
-    ${renderGoalSection(id, 'monthly', goals.monthly, cat, 'Monthly Goals')}
-    ${renderGoalSection(id, 'weekly', goals.weekly, cat, 'Weekly Goals')}
-    <div class="section-label">Today's Tasks</div>
-    <div class="card">
-      <div class="card-body" style="padding-top:14px">
-        ${tasks.length === 0
-          ? '<div class="empty-state"><div class="big">✅</div>No tasks today</div>'
-          : tasks.map(t => {
-              const isDone = t.status === 'Complete';
-              const isIP = t.status === 'In Progress';
-              return `
-                <div class="task-item" onclick="cycleTask('${t.id}');renderCatPage('${id}')">
-                  <div class="task-check ${isDone?'done':isIP?'in-progress':''}"></div>
-                  <div style="flex:1">
-                    <div class="task-text ${isDone?'done':''}">${t.text}</div>
-                    <div class="task-meta">
-                      <span class="task-cat-badge" style="background:${cat.bg};color:${cat.color}">${t.priority}</span>
-                    </div>
-                  </div>
-                  <button class="task-cycle-btn" onclick="event.stopPropagation();deleteTask('${t.id}');renderCatPage('${id}')">✕</button>
-                </div>`;
-            }).join('')
-        }
-        <button class="add-task-btn" onclick="openAddTaskForCat('${id}')">+ Add task</button>
-      </div>
-    </div>
-    ${id === 'diet' ? renderDietLog() : ''}
-  `;
-}
-
-function renderGoalSection(catId, period, goalsList, cat, label) {
-  return `
-    <div class="section-label">${label}</div>
-    <div class="card">
-      <div class="card-body" style="padding-top:8px">
-        ${goalsList.length === 0
-          ? `<div style="color:var(--text-3);font-size:13px;padding:8px 0">No goals yet</div>`
-          : goalsList.map(g => {
-              const pct = g.total > 0 ? Math.min(100, Math.round((g.done/g.total)*100)) : 0;
-              return `
-                <div class="weekly-goal-row">
-                  <div class="wg-top">
-                    <span class="wg-name">${g.name}</span>
-                    <span class="wg-pct">${pct}%</span>
-                  </div>
-                  <div class="wg-track"><div class="wg-fill" style="width:${pct}%;background:${cat.color}"></div></div>
-                  <div class="wg-bottom">
-                    <span class="wg-count">${g.done}/${g.total}</span>
-                    <div class="wg-stepper">
-                      <button class="wg-step-btn" onclick="bumpGoal('${catId}','${period}','${g.id}',-1)">−</button>
-                      <button class="wg-step-btn" onclick="bumpGoal('${catId}','${period}','${g.id}',1)">＋</button>
-                    </div>
-                  </div>
-                </div>`;
-            }).join('')
-        }
-        <button class="add-task-btn" onclick="openAddGoal('${catId}','${period}')">+ Add ${period} goal</button>
-      </div>
-    </div>`;
-}
-
-function renderDietLog() {
-  const total = getTotalCal();
-  const pct = Math.min(100, Math.round((total/GOAL_CAL)*100));
-  const remaining = GOAL_CAL - total;
-  return `
-    <div class="section-label">Today's Calories</div>
-    <div class="cal-widget" style="margin-bottom:14px">
-      <div class="cal-top">
-        <div>
-          <div style="display:flex;align-items:flex-end;gap:4px">
-            <span class="cal-consumed" id="cal-today-diet">${total.toLocaleString()}</span>
-            <span class="cal-label">consumed</span>
+    return `
+      <div class="cat-summary-card" onclick="nav('${cat.id}')">
+        <div class="cat-summary-top">
+          <div class="cat-summary-name">
+            <div class="cat-pill" style="background:${cat.color}"></div>
+            ${cat.name}
+          </div>
+          <span class="cat-summary-counts">${done}/${total} tasks</span>
+        </div>
+        <div class="bar-group">
+          <div class="bar-row">
+            <span class="bar-label">Daily</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${dailyPct}%;background:${cat.color}"></div></div>
+            <span class="bar-pct">${dailyPct}%</span>
+          </div>
+          <div class="bar-row">
+            <span class="bar-label">Weekly</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${weeklyPct}%;background:${cat.color};opacity:0.6"></div></div>
+            <span class="bar-pct">${weeklyPct}%</span>
           </div>
         </div>
-        <div class="cal-remaining">
-          <div class="cal-remaining-num">${Math.max(0,remaining).toLocaleString()}</div>
-          <div class="cal-remaining-label">remaining</div>
+      </div>`;
+  }).join('');
+}
+
+function renderWeeklyStats() {
+  const allTasks = S.tasks;
+  const done = allTasks.filter(t => t.done).length;
+  const total = allTasks.length;
+  const calTotal = getCalTotal();
+  const pct = total > 0 ? Math.round((done/total)*100) : 0;
+  document.getElementById('weekly-stats-grid').innerHTML = `
+    <div class="stat-box">
+      <div class="stat-num">${done}</div>
+      <div class="stat-label">Tasks Done</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num">${pct}%</div>
+      <div class="stat-label">Completion</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-num" style="color:${calTotal > GOAL_CAL ? 'var(--red)' : 'var(--green)'}">${calTotal > 0 ? calTotal.toLocaleString() : '—'}</div>
+      <div class="stat-label">Cal Today</div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════
+// MSK PAGE
+// ══════════════════════════════════════════════
+function renderMsk() {
+  const recurring = S.tasks.filter(t => t.cat === 'msk' && t.recurring);
+  const oneTime   = S.tasks.filter(t => t.cat === 'msk' && !t.recurring);
+  const cat = CATS.find(c => c.id === 'msk');
+
+  document.getElementById('msk-recurring-section').innerHTML = `
+    <div class="section-label">Recurring Tasks</div>
+    <div class="task-card">
+      ${recurring.map(t => taskItemHTML(t, cat)).join('')}
+      <div class="add-task-row" onclick="openAddTaskFor('msk','recurring')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Add recurring task
+      </div>
+    </div>`;
+
+  document.getElementById('msk-tasks-section').innerHTML = `
+    <div class="section-label">Active Tasks</div>
+    <div class="task-card">
+      ${oneTime.map(t => taskItemHTML(t, cat)).join('')}
+      <div class="add-task-row" onclick="openAddTaskFor('msk','one-time')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Add task
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════
+// GUITAR PAGE
+// ══════════════════════════════════════════════
+function renderGuitar() {
+  const practiced = S.guitarPracticed[TODAY_STR] || false;
+  const cat = CATS.find(c => c.id === 'guitar');
+  const tasks = S.tasks.filter(t => t.cat === 'guitar');
+  const daysThisWeek = Object.values(S.guitarPracticed).filter(Boolean).length;
+
+  document.getElementById('guitar-content').innerHTML = `
+    <div class="section-label">Today's Practice</div>
+    <div class="task-card">
+      <div class="practice-toggle" onclick="togglePractice()">
+        <span class="practice-toggle-label">Practiced today (30–60 min)</span>
+        <div class="toggle-switch ${practiced ? 'on' : ''}">
+          <div class="toggle-knob"></div>
         </div>
       </div>
-      <div class="cal-track"><div class="cal-fill" style="width:${pct}%;background:${total>GOAL_CAL?'#ef4444':'var(--diet)'}"></div></div>
-      <div style="margin-top:10px">
-        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--text-2)">
-          <span>Target: ${GOAL_CAL.toLocaleString()} cal</span>
-          <span>TDEE: 2,300 cal</span>
-          <span>Deficit: ${(2300-total).toLocaleString()}</span>
+    </div>
+
+    <div class="section-label">Technique Checklist</div>
+    <div class="task-card">
+      ${tasks.map(t => taskItemHTML(t, cat)).join('')}
+      <div class="add-task-row" onclick="openAddTaskFor('guitar')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Add technique / task
+      </div>
+    </div>
+
+    <div class="section-label">This Week</div>
+    <div class="task-card">
+      <div style="padding:14px 16px">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px">
+          <span style="font-size:14px;font-weight:500">Days practiced</span>
+          <span style="font-family:'Geist Mono',monospace;font-size:14px">${daysThisWeek} / 7</span>
+        </div>
+        <div class="bar-track" style="height:6px">
+          <div class="bar-fill" style="width:${Math.round((daysThisWeek/7)*100)}%;background:var(--guitar)"></div>
         </div>
       </div>
     </div>`;
 }
 
-function bumpGoal(catId, period, goalId, delta) {
-  const goals = S.catGoals[catId][period];
-  const g = goals.find(g => g.id === goalId);
-  if (g) { g.done = Math.max(0, Math.min(g.total, g.done + delta)); save(); renderCatPage(catId); }
+function togglePractice() {
+  S.guitarPracticed[TODAY_STR] = !S.guitarPracticed[TODAY_STR];
+  if (S.guitarPracticed[TODAY_STR]) S.lastActive['guitar'] = TODAY_STR;
+  save(); renderGuitar();
 }
 
-let addingGoalCat = null, addingGoalPeriod = null;
+// ══════════════════════════════════════════════
+// APP PAGE
+// ══════════════════════════════════════════════
+function renderApp() {
+  const cat = CATS.find(c => c.id === 'app');
+  const tasks = S.tasks.filter(t => t.cat === 'app');
+  const workedToday = tasks.find(t => t.id === 'app-1')?.done || false;
+  const sessions = S.appSessions.slice(-5).reverse();
 
-function openAddGoal(catId, period) {
-  addingGoalCat = catId; addingGoalPeriod = period;
-  const cat = CATS.find(c => c.id === catId);
-  document.getElementById('streak-modal-title').textContent = `Add ${period} goal`;
-  document.getElementById('streak-current-input').placeholder = 'Goal name (e.g. Practice 30 min)';
-  document.getElementById('streak-current-input').type = 'text';
-  document.getElementById('streak-current-input').value = '';
-  document.getElementById('streak-best-input').placeholder = 'Target (e.g. 7 for 7 days)';
-  document.getElementById('streak-best-input').type = 'number';
-  document.getElementById('streak-best-input').value = '';
-  // Override save button
-  document.querySelector('#streak-modal .modal-btn.primary').onclick = saveGoal;
-  openModal('streak-modal');
+  document.getElementById('app-content').innerHTML = `
+    <div class="section-label">Today</div>
+    <div class="task-card">
+      ${tasks.filter(t => t.recurring).map(t => taskItemHTML(t, cat)).join('')}
+    </div>
+
+    <div class="section-label">Feature Milestones</div>
+    <div class="task-card">
+      ${S.milestones.map(m => `
+        <div class="milestone-item ${m.done ? 'done' : ''}" onclick="toggleMilestone('${m.id}')">
+          <div class="milestone-check ${m.done ? 'done' : ''}"></div>
+          <span class="milestone-text">${m.text}</span>
+        </div>`).join('')}
+      <div class="add-task-row" onclick="promptAddMilestone()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Add milestone
+      </div>
+    </div>
+
+    <div class="section-label">Recent Sessions</div>
+    <div class="task-card">
+      ${sessions.length === 0
+        ? '<div class="empty">No sessions logged yet</div>'
+        : sessions.map(s => `
+          <div class="cal-log-item">
+            <span style="color:var(--text2);font-size:12px">${s.date}</span>
+            <span style="font-size:13px">${s.note}</span>
+          </div>`).join('')
+      }
+      <div class="add-task-row" onclick="logSession()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Log session
+      </div>
+    </div>`;
 }
 
-function saveGoal() {
-  const name = document.getElementById('streak-current-input').value.trim();
-  const total = parseInt(document.getElementById('streak-best-input').value) || 7;
-  if (!name) return;
-  S.catGoals[addingGoalCat][addingGoalPeriod].push({
-    id: Date.now().toString(), name, done:0, total
+function toggleMilestone(id) {
+  const m = S.milestones.find(m => m.id === id);
+  if (m) { m.done = !m.done; save(); renderApp(); }
+}
+
+function promptAddMilestone() {
+  const text = prompt('Milestone name:');
+  if (!text?.trim()) return;
+  S.milestones.push({ id: Date.now()+'', text: text.trim(), done: false });
+  save(); renderApp();
+}
+
+function logSession() {
+  const note = prompt('Session note (e.g. "Built auth form, fixed modal bug"):');
+  if (!note?.trim()) return;
+  S.appSessions.push({ date: TODAY_STR, note: note.trim() });
+  S.lastActive['app'] = TODAY_STR;
+  save(); renderApp();
+}
+
+// ══════════════════════════════════════════════
+// NURSING PAGE
+// ══════════════════════════════════════════════
+function renderNursing() {
+  const cat = CATS.find(c => c.id === 'nursing');
+  const tasks = S.tasks.filter(t => t.cat === 'nursing');
+  const studyDone = tasks.find(t => t.id === 'nurse-1')?.done || false;
+
+  document.getElementById('nursing-content').innerHTML = `
+    <div class="section-label">Daily Tasks</div>
+    <div class="task-card">
+      ${tasks.map(t => taskItemHTML(t, cat)).join('')}
+      <div class="add-task-row" onclick="openAddTaskFor('nursing')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Add task
+      </div>
+    </div>
+
+    <div class="section-label">CUNY Application Checklist</div>
+    <div class="task-card">
+      ${S.deadlines.map(d => `
+        <div class="deadline-item">
+          <span class="deadline-date">${d.date}</span>
+          <span class="deadline-text">${d.text}</span>
+          <span class="deadline-status ${d.done ? 'done' : 'pending'}" 
+                onclick="toggleDeadline('${d.id}')" style="cursor:pointer">
+            ${d.done ? 'Done' : 'Pending'}
+          </span>
+        </div>`).join('')}
+      <div class="add-task-row" onclick="promptAddDeadline()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v12M1 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Add deadline / item
+      </div>
+    </div>`;
+}
+
+function toggleDeadline(id) {
+  const d = S.deadlines.find(d => d.id === id);
+  if (d) { d.done = !d.done; save(); renderNursing(); }
+}
+
+function promptAddDeadline() {
+  const text = prompt('Item or deadline:');
+  if (!text?.trim()) return;
+  const date = prompt('Date or label (e.g. "Mar 2025" or "In progress"):') || 'TBD';
+  S.deadlines.push({ id: Date.now()+'', text: text.trim(), date, done: false });
+  save(); renderNursing();
+}
+
+// ══════════════════════════════════════════════
+// DIET PAGE
+// ══════════════════════════════════════════════
+function renderDiet() {
+  const total = getCalTotal();
+  const rem = Math.max(0, GOAL_CAL - total);
+  const deficit = 2300 - total;
+  const pct = Math.min(100, (total/GOAL_CAL)*100);
+  const weighIn = S.weighIn[TODAY_STR] || '';
+
+  document.getElementById('diet-content').innerHTML = `
+    <div class="section-label">Today's Calories</div>
+    <div class="cal-card">
+      <div class="cal-main">
+        <div class="cal-numbers">
+          <div>
+            <div class="cal-eaten">${total.toLocaleString()}</div>
+            <div class="cal-eaten-label">eaten · goal ${GOAL_CAL.toLocaleString()}</div>
+          </div>
+          <div class="cal-right">
+            <div class="cal-remain" style="color:${total > GOAL_CAL ? 'var(--red)' : 'var(--text)'}">${rem.toLocaleString()}</div>
+            <div class="cal-remain-label">${total > GOAL_CAL ? 'over goal' : 'remaining'}</div>
+          </div>
+        </div>
+        <div class="cal-bar-track">
+          <div class="cal-bar-fill" style="width:${pct}%;background:${total>GOAL_CAL?'var(--red)':'var(--diet)'}"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-bottom:14px">
+          <span style="font-size:11px;color:var(--text2)">TDEE deficit: <strong>${deficit > 0 ? deficit.toLocaleString() : 0}</strong> cal</span>
+          <span style="font-size:11px;color:var(--text2)">Est: <strong>${deficit > 0 ? (deficit/3500*7).toFixed(2) : '0'} lbs/wk</strong></span>
+        </div>
+        <div class="cal-entry-row">
+          <input class="cal-input" id="cal-in-diet" type="number" inputmode="numeric" placeholder="add calories...">
+          <button class="cal-btn" onclick="addCalDiet()">Add</button>
+        </div>
+      </div>
+      <div class="cal-log" id="cal-log-diet">
+        ${S.cal.entries.slice().reverse().map(e => `
+          <div class="cal-log-item">
+            <span style="color:var(--text2)">${e.label}</span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="cal-log-amt">${e.amt} cal</span>
+              <button class="cal-del" onclick="delCal('${e.id}');renderDiet()">✕</button>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="section-label">Daily Habits</div>
+    <div class="task-card">
+      ${S.tasks.filter(t => t.cat === 'diet').map(t =>
+        taskItemHTML(t, CATS.find(c => c.id === 'diet'))).join('')}
+    </div>
+
+    <div class="section-label">Weigh-In</div>
+    <div class="task-card">
+      <div class="weighin-row">
+        <span class="weighin-label">This morning's weight</span>
+        <div class="weighin-input-wrap">
+          <input class="weighin-input" id="weighin-input" type="number" 
+            inputmode="decimal" placeholder="—" 
+            value="${weighIn}"
+            onchange="saveWeighIn(this.value)">
+          <span class="weighin-unit">lbs</span>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('cal-in-diet')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') addCalDiet();
   });
-  save(); closeModal('streak-modal');
-  renderCatPage(addingGoalCat);
-  document.querySelector('#streak-modal .modal-btn.primary').onclick = saveStreak;
-  document.getElementById('streak-current-input').type = 'number';
 }
 
-function openAddTaskForCat(catId) {
-  openAddTask();
-  setTimeout(() => {
-    const pills = document.querySelectorAll('#task-cat-pills .pill');
-    const idx = CATS.findIndex(c => c.id === catId);
-    if (pills[idx]) selectCatPill(pills[idx], catId, CATS[idx].color);
-  }, 50);
+function addCalDiet() {
+  const input = document.getElementById('cal-in-diet');
+  const val = parseInt(input.value);
+  if (!val || val <= 0) return;
+  const n = S.cal.entries.length + 1;
+  S.cal.entries.push({ id: Date.now()+'', amt: val, label: `Entry ${n}` });
+  input.value = '';
+  save(); renderDiet();
+  if (currentPage === 'today') renderCalWidget();
 }
 
-// ═══════════════════════════════════════════════
-// MODALS
-// ═══════════════════════════════════════════════
-function openModal(id)  {
+function saveWeighIn(val) {
+  const num = parseFloat(val);
+  if (!isNaN(num) && num > 0) { S.weighIn[TODAY_STR] = num; save(); }
+}
+
+// ══════════════════════════════════════════════
+// ADD TASK SHEET
+// ══════════════════════════════════════════════
+let addForCat = 'msk';
+let addType   = 'one-time';
+
+function openAddTask() { openAddTaskFor(currentPage === 'today' ? 'msk' : currentPage); }
+
+function openAddTaskFor(catId, forceType) {
+  addForCat = CATS.find(c => c.id === catId) ? catId : 'msk';
+  addType   = forceType || 'one-time';
+  document.getElementById('new-task-input').value = '';
+
+  // cat pills
+  document.getElementById('cat-pills').innerHTML = CATS.map(c => `
+    <button class="spill ${c.id === addForCat ? 'on' : ''}"
+      style="${c.id === addForCat ? `background:${c.color};border-color:${c.color}` : ''}"
+      onclick="pickCat(this,'${c.id}','${c.color}')">${c.name}</button>`
+  ).join('');
+
+  // type pills
+  document.querySelectorAll('#type-pills .spill').forEach(p => {
+    p.classList.toggle('on', p.dataset.type === addType ||
+      (addType === 'one-time' && p.textContent === 'One-time') ||
+      (addType === 'recurring' && p.textContent === 'Recurring'));
+  });
+
+  openSheet('add-sheet');
+  setTimeout(() => document.getElementById('new-task-input').focus(), 280);
+}
+
+function pickCat(el, id, color) {
+  document.querySelectorAll('#cat-pills .spill').forEach(p => {
+    p.classList.remove('on'); p.style.background = ''; p.style.borderColor = '';
+  });
+  el.classList.add('on');
+  el.style.background = color; el.style.borderColor = color;
+  addForCat = id;
+}
+
+function pickType(el, type) {
+  document.querySelectorAll('#type-pills .spill').forEach(p => p.classList.remove('on'));
+  el.classList.add('on'); addType = type;
+}
+
+function commitTask() {
+  const text = document.getElementById('new-task-input').value.trim();
+  if (!text) return;
+  S.tasks.push({
+    id: 'u-' + Date.now(),
+    cat: addForCat,
+    text,
+    recurring: addType === 'recurring',
+    done: false,
+  });
+  save(); closeSheet('add-sheet'); renderPage(currentPage);
+}
+
+// ══════════════════════════════════════════════
+// SHEET HELPERS
+// ══════════════════════════════════════════════
+function openSheet(id) {
   document.getElementById(id).classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-function closeModal(id) {
+function closeSheet(id) {
   document.getElementById(id).classList.remove('open');
   document.body.style.overflow = '';
 }
-
-document.querySelectorAll('.modal-overlay').forEach(m => {
-  m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) closeSheet(o.id); });
 });
 
-// ═══════════════════════════════════════════════
-// INSTALL BANNER
-// ═══════════════════════════════════════════════
-function dismissInstall() {
+// ══════════════════════════════════════════════
+// INSTALL TIP
+// ══════════════════════════════════════════════
+function closeInstall() {
   S.installDismissed = true; save();
-  document.getElementById('install-banner').style.display = 'none';
+  document.getElementById('install-tip').classList.remove('show');
 }
-
 function checkInstall() {
-  const isStandalone = window.navigator.standalone === true ||
+  const standalone = window.navigator.standalone === true ||
     window.matchMedia('(display-mode: standalone)').matches;
-  if (!isStandalone && !S.installDismissed) {
-    document.getElementById('install-banner').style.display = 'flex';
+  if (!standalone && !S.installDismissed) {
+    document.getElementById('install-tip').classList.add('show');
   }
 }
 
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════════════
-setupDate();
+// ══════════════════════════════════════════════
+setupHeader();
 checkInstall();
-renderDashboard();
+renderToday();
 </script>
 </body>
 </html>
